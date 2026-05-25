@@ -29,15 +29,15 @@ header{background:var(--navy);padding:0 1.25rem;display:flex;align-items:center;
 .tnav-btn.active{color:#fff;border-bottom-color:var(--blue-mid)}
 
 /* ── PAGE & LAYOUT ──────────────────────────────────────────────────────── */
-.page{display:none;padding:1.25rem;max-width:1140px;margin:0 auto}
+.page{display:none;padding:1.25rem}
 .page.active{display:block}
-@media(min-width:600px){.page{padding:1.6rem}}
+@media(min-width:600px){.page{padding:1.5rem 1.8rem}}
 .sec-title{font-family:var(--fh);font-size:1.3rem;font-weight:700;color:var(--navy);margin-bottom:.2rem}
 .sec-sub{font-size:.84rem;color:var(--muted);margin-bottom:1.3rem;line-height:1.6}
 
 /* Responsive 2-col grid */
-.g2{display:grid;grid-template-columns:1fr;gap:1rem}
-@media(min-width:700px){.g2{grid-template-columns:1fr 1fr;gap:1.2rem}}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:1.2rem}
+@media(max-width:760px){.g2{grid-template-columns:1fr}}
 .r2{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
 
 /* ── CARDS ──────────────────────────────────────────────────────────────── */
@@ -198,8 +198,8 @@ tbody td:first-child{text-align:left;color:var(--muted)}
 .sub{display:flex;align-items:center;padding:4px 10px 4px 22px;font-size:.75rem;gap:5px}
 .sub .la{color:var(--muted)}.sub .va{color:var(--coral)}.sub .va.p{color:var(--green)}
 /* .grid = 2-col layout (tax uses this for left/right split) */
-.grid{display:grid;grid-template-columns:1fr;gap:1rem}
-@media(min-width:700px){.grid{grid-template-columns:1fr 1fr;gap:1.2rem}}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:1.2rem}
+@media(max-width:760px){.grid{grid-template-columns:1fr}}
 /* slw = slider wrap in tax */
 .slw{display:flex;align-items:center;gap:8px;margin-top:4px}
 .slw input[type=range]{flex:1;-webkit-appearance:none;height:4px;background:var(--border);border-radius:2px;border:none;padding:0;cursor:pointer;min-width:0}
