@@ -178,6 +178,29 @@ tbody td:first-child{text-align:left;color:var(--muted)}
 .mt tfoot td{padding:6px 8px;text-align:right;font-weight:600;background:var(--blue-lt);color:var(--blue);font-size:.77rem}
 .mt tfoot td:first-child{text-align:left;color:var(--navy)}
 
+/* ── TAX SUB-TABS ───────────────────────────────────────────────────────── */
+.tax-subtabs{display:flex;background:#1a2942;padding:0 1.25rem;border-bottom:2px solid rgba(255,255,255,.08);overflow-x:auto;scrollbar-width:none}
+.tax-subtabs::-webkit-scrollbar{display:none}
+.tax-subtabs.hidden{display:none}
+.tstab{font-family:var(--fb);font-size:.76rem;font-weight:600;color:#94a3b8;background:none;border:none;padding:0 1.1rem;height:42px;cursor:pointer;white-space:nowrap;border-bottom:2.5px solid transparent;transition:color .15s,border-color .15s;letter-spacing:.04em;flex-shrink:0;display:flex;align-items:center;gap:5px}
+.tstab:hover{color:#e2e8f0}
+.tstab.active{color:#fff;border-bottom-color:var(--amber)}
+
+/* Tax sub-pages */
+.tax-sub-page{display:none}
+.tax-sub-page.active{display:block}
+
+/* Single regime result box */
+.single-box{border:2px solid var(--border);border-radius:var(--radius);padding:1.2rem;text-align:center;transition:all .2s;margin-bottom:1rem}
+.single-box.win{border-color:var(--green);background:#f0fdf4}
+.single-box-old{border-color:#f59e0b;background:#fffbeb}
+.single-box-old.win{border-color:#d97706;background:#fef3c7}
+.single-box .blbl{font-size:.69rem;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:5px}
+.single-box .btx{font-family:var(--fh);font-size:1.55rem;font-weight:700;color:var(--navy)}
+.single-box .bsb{font-size:.72rem;color:var(--muted);margin-top:5px}
+.single-box .bth{font-size:1rem;font-weight:700;color:var(--navy);margin-top:3px}
+.single-box .bef{font-size:.73rem;font-weight:600;color:var(--coral);margin-top:3px}
+
 /* ── TAX FILE CLASS ALIASES (Income_tax_v1 naming) ────────────────────────── */
 /* .f = field */
 .f{margin-bottom:.9rem}.f:last-child{margin-bottom:0}
@@ -232,6 +255,13 @@ tbody td:first-child{text-align:left;color:var(--muted)}
 <div class="topnav">
   <button class="tnav-btn" onclick="showPage('loans',this)">🏦 Loans</button>
   <button class="tnav-btn active" onclick="showPage('tax',this)">📋 Income Tax</button>
+</div>
+
+<!-- ── TAX SUB-TABS (shown only when tax page active) ── -->
+<div class="tax-subtabs" id="tax-subtabs">
+  <button class="tstab active" id="tstab-new" onclick="showTaxTab('new',this)">🟢 New Regime</button>
+  <button class="tstab" id="tstab-old" onclick="showTaxTab('old',this)">🟡 Old Regime</button>
+  <button class="tstab" id="tstab-compare" onclick="showTaxTab('compare',this)">⚖️ New vs Old Regime</button>
 </div>
 
 <!-- ═══════════════════════════════════════════════════════
@@ -318,8 +348,553 @@ tbody td:first-child{text-align:left;color:var(--muted)}
      INCOME TAX PAGE
 ════════════════════════════════════════════════════════ -->
 <div class="page active" id="page-tax">
+
+<!-- ── SHARED INPUTS (hidden, drive all 3 tabs) ── -->
+<input type="hidden" id="basic" value="675750">
+<input type="hidden" id="fixedAT" value="1275000">
+<input type="hidden" id="city" value="metro">
+<input type="hidden" id="pfopt" value="1">
+<input type="hidden" id="varP" value="25500">
+<input type="hidden" id="premB" value="38138">
+<input type="hidden" id="varFreq" value="biannual">
+<input type="hidden" id="premFreq" value="annual">
+<input type="hidden" id="foodMo" value="0">
+<input type="hidden" id="npsPct" value="0">
+<input type="hidden" id="mobile" value="0">
+<input type="hidden" id="gratPct" value="5.9489">
+<input type="hidden" id="varPct" value="100">
+<input type="hidden" id="leavedays" value="0">
+<input type="hidden" id="leavemo" value="Jan">
+<input type="hidden" id="shiftmo" value="0">
+<input type="hidden" id="rent" value="0">
+<input type="hidden" id="lta" value="0">
+<input type="hidden" id="otherA" value="0">
+<input type="hidden" id="d80d" value="0">
+<input type="hidden" id="hli" value="0">
+<input type="hidden" id="npsSelf" value="0">
+<input type="hidden" id="othDed" value="0">
+<input type="hidden" id="othInc" value="0">
+
+<!-- ══════════════════════════════════════════════
+     TAX SUB-PAGE: NEW REGIME
+══════════════════════════════════════════════ -->
+<div class="tax-sub-page active" id="taxpage-new">
 <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;margin-bottom:.2rem">
-  <h1 style="margin-bottom:0">Income Tax Calculator <span style="font-size:.9rem;font-weight:400;color:var(--muted)">India — FY 2025-26</span></h1>
+  <h1 style="margin-bottom:0">🟢 New Regime Calculator <span style="font-size:.9rem;font-weight:400;color:var(--muted)">India — FY 2025-26</span></h1>
+  <button onclick="resetAll()" title="Clear all text fields" style="font-family:var(--fb);font-size:.78rem;font-weight:600;padding:7px 16px;border-radius:8px;border:1.5px solid var(--coral);background:#fff;color:var(--coral);cursor:pointer;white-space:nowrap;flex-shrink:0;transition:all .15s;margin-top:4px" onmouseover="this.style.background='var(--coral)';this.style.color='#fff'" onmouseout="this.style.background='#fff';this.style.color='var(--coral)'">🔄 Reset</button>
+</div>
+<div class="sub">Default regime from FY 2025-26 · Simpler filing · Zero tax up to ₹12.75L</div>
+<div style="background:#f0fdf4;border:1px solid #a7f3d0;border-left:4px solid var(--green);border-radius:10px;padding:10px 15px;margin-bottom:1.2rem;font-size:.8rem;color:#065f46;line-height:1.7">
+  <span style="font-weight:700;font-size:.83rem">🟢 New Regime — FY 2025-26</span><br>
+  Default regime. Standard deduction ₹75,000. No HRA/80C/80D deductions. Zero tax up to ₹12.75L (₹12L 87A rebate + ₹75K std deduction). Lower slab rates, simpler filing.
+</div>
+<div class="grid">
+<!-- LEFT: Inputs -->
+<div>
+<div class="card">
+  <div class="ct-a">A — Fixed Pay</div>
+  <div class="ib">📌 Enter <b>Basic salary</b> from your CTC letter. HRA, Conveyance, Employer PF and Gratuity all auto-compute from it.</div>
+  <div class="f">
+    <div class="fl"><span>Basic Salary (₹/yr) <span style="color:var(--coral);font-size:.68rem;font-weight:600;text-transform:none;letter-spacing:0">← Root value. Enter this first.</span></span></div>
+    <input type="number" id="n-basic" value="675750" oninput="syncAndCalc('basic',this.value)" onchange="syncAndCalc('basic',this.value)">
+  </div>
+  <div class="f">
+    <div class="fl"><span>Fixed Pay A Total (₹/yr — from CTC letter)</span></div>
+    <input type="number" id="n-fixedAT" value="1275000" oninput="syncAndCalc('fixedAT',this.value)" onchange="syncAndCalc('fixedAT',this.value)">
+    <div class="ht">Special Allowance = A − Basic − HRA − Conveyance (auto-fills as residual)</div>
+  </div>
+  <div class="r2">
+    <div class="f">
+      <div class="fl"><span>City Type</span></div>
+      <select id="n-city" onchange="syncAndCalc('city',this.value)">
+        <option value="metro" selected>Metro — HRA 50%</option>
+        <option value="nonmetro">Non-Metro — HRA 40%</option>
+      </select>
+    </div>
+    <div class="f">
+      <div class="fl"><span>HRA</span><span class="cv" id="n-hraLbl">50% of Basic</span></div>
+      <input id="n-hra" class="au" readonly>
+    </div>
+  </div>
+  <div class="r2">
+    <div class="f">
+      <div class="fl"><span>Conveyance</span><span class="cv">15% of Basic</span></div>
+      <input id="n-conv" class="au" readonly>
+    </div>
+    <div class="f">
+      <div class="fl"><span>Special Allowance</span><span class="cv">Residual</span></div>
+      <input id="n-spl" class="au" readonly>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="ct-a">Flexible Benefits <span style="font-size:.68rem;font-weight:400;text-transform:none;letter-spacing:0;color:var(--green)">(optional — employer-provided)</span></div>
+  <div class="f">
+    <div class="fl"><span>Food/Meal Coupons (₹/month) <span class="tg b">Both regimes</span></span></div>
+    <div class="fsteps" id="n-fsteps">
+      <button class="fbtn on" onclick="setFoodN(0,this)">₹0</button>
+      <button class="fbtn" onclick="setFoodN(2200,this)">₹2,200</button>
+      <button class="fbtn" onclick="setFoodN(4400,this)">₹4,400</button>
+      <button class="fbtn" onclick="setFoodN(6600,this)">₹6,600</button>
+      <button class="fbtn" onclick="setFoodN(8800,this)">₹8,800</button>
+    </div>
+    <div class="ht">Non-cash — not to bank. Tax-exempt in both regimes (IT Act 2025).</div>
+  </div>
+  <hr class="dv">
+  <div class="f">
+    <div class="fl"><span>Employer NPS 80CCD(2) (% of Basic) <span class="tg b">Both</span></span><span class="sv" id="n-npsPctV">0% = ₹0/mo</span></div>
+    <div class="slw"><input type="range" id="n-npsPct" min="0" max="14" step="1" value="0" oninput="syncAndCalc('npsPct',this.value)"></div>
+    <div class="ht">To NPS account — not bank. Reduces taxable in both regimes.</div>
+  </div>
+  <hr class="dv">
+  <div class="f">
+    <div class="fl"><span>Mobile Reimbursement (₹/mo) <span class="tg b">Both</span></span></div>
+    <input type="number" id="n-mobile" value="0" placeholder="e.g. 1500" oninput="syncAndCalc('mobile',this.value)">
+  </div>
+</div>
+
+<div class="card">
+  <div class="ct-b">B — Retirals (Employer provisions — not your cash)</div>
+  <div class="wb">PF goes to EPF account. Gratuity paid only on exit (5+ yrs). Neither comes to bank monthly.</div>
+  <div class="f">
+    <div class="fl"><span>PF Option</span></div>
+    <select id="n-pfopt" onchange="syncAndCalc('pfopt',this.value)">
+      <option value="1" selected>Option 1 — 12% of Actual Basic (higher corpus)</option>
+      <option value="2">Option 2 — 12% of ₹15,000 ceiling = ₹1,800/mo</option>
+    </select>
+  </div>
+  <div class="r2">
+    <div class="f">
+      <div class="fl"><span>Employer PF</span><span class="cv" id="n-pferLbl">12% of Basic</span></div>
+      <input id="n-pfEr" class="au" readonly>
+    </div>
+    <div class="f">
+      <div class="fl"><span>Employee PF</span><span class="cv" id="n-pfempLbl">12% of Basic</span></div>
+      <input id="n-pfEmp" class="au" readonly>
+    </div>
+  </div>
+  <div class="r2">
+    <div class="f">
+      <div class="fl"><span>Gratuity %</span><span class="sv" id="n-gratV">5.95%</span></div>
+      <div class="slw"><input type="range" id="n-gratPct" min="4.81" max="8" step="0.0001" value="5.9489" oninput="syncAndCalc('gratPct',this.value)"></div>
+    </div>
+    <div class="f">
+      <div class="fl"><span>Gratuity (₹/yr)</span><span class="cv">% of Basic</span></div>
+      <input id="n-grat" class="au" readonly>
+    </div>
+  </div>
+  <div class="f">
+    <div class="fl"><span>Retirals Total (B)</span><span class="cv">Employer PF + Gratuity</span></div>
+    <input id="n-retB" class="au" readonly>
+  </div>
+</div>
+
+<div class="card">
+  <div class="ct-c">C — Variable Pay (Performance-based)</div>
+  <div class="ib">Fully taxable as salary. TDS spikes in the payment month.</div>
+  <div class="r2">
+    <div class="f">
+      <div class="fl"><span>Variable Pay Target (₹/yr)</span></div>
+      <input type="number" id="n-varP" value="25500" oninput="syncVFN()">
+    </div>
+    <div class="f">
+      <div class="fl"><span>Premium Bonus Target (₹/yr)</span></div>
+      <input type="number" id="n-premB" value="38138" oninput="syncVFN()">
+    </div>
+  </div>
+  <div class="f">
+    <div class="fl"><span>Expected Payout %</span><span class="sv" id="n-varPctV">100%</span></div>
+    <div class="slw"><input type="range" id="n-varPct" min="0" max="150" step="5" value="100" oninput="syncAndCalc('varPct',this.value)"></div>
+  </div>
+  <div class="r2">
+    <div class="f">
+      <div class="fl"><span>Variable Frequency</span></div>
+      <select id="n-varFreq" onchange="syncVFN()">
+        <option value="annual">Annual</option>
+        <option value="biannual" selected>Bi-Annual</option>
+        <option value="quarterly">Quarterly</option>
+      </select>
+    </div>
+    <div class="f">
+      <div class="fl"><span>Premium Frequency</span></div>
+      <select id="n-premFreq" onchange="syncVFN()">
+        <option value="annual" selected>Annual</option>
+        <option value="biannual">Bi-Annual</option>
+        <option value="quarterly">Quarterly</option>
+      </select>
+    </div>
+  </div>
+  <div id="n-vmi" style="margin-top:.5rem"></div>
+</div>
+
+<div class="card">
+  <div class="ct-c">Leave Encashment &amp; Shift Allowance</div>
+  <div class="f">
+    <div class="fl"><span>Leave Encashment — Days to Encash</span></div>
+    <input type="number" id="n-leavedays" value="0" placeholder="e.g. 10" oninput="syncAndCalc('leavedays',this.value)">
+  </div>
+  <div class="r2">
+    <div class="f">
+      <div class="fl"><span>Payment Month</span></div>
+      <select id="n-leavemo" onchange="syncAndCalc('leavemo',this.value)">
+        <option value="Apr">April</option><option value="May">May</option>
+        <option value="Jun">June</option><option value="Jul">July</option>
+        <option value="Aug">August</option><option value="Sep">September</option>
+        <option value="Oct">October</option><option value="Nov">November</option>
+        <option value="Dec">December</option><option value="Jan" selected>January</option>
+        <option value="Feb">February</option><option value="Mar">March</option>
+      </select>
+    </div>
+    <div class="f">
+      <div class="fl"><span>Leave Encashment Amount</span><span class="cv" id="n-leaveAmtLbl">₹0</span></div>
+      <input id="n-leaveAmtDisp" class="au" readonly>
+    </div>
+  </div>
+  <hr class="dv">
+  <div class="f">
+    <div class="fl"><span>Shift Allowance (₹/month)</span></div>
+    <input type="number" id="n-shiftmo" value="0" placeholder="e.g. 2000" oninput="syncAndCalc('shiftmo',this.value)">
+  </div>
+</div>
+
+<div class="card">
+  <div class="ct-b">Other Deductions &amp; Income</div>
+  <div class="f">
+    <div class="fl"><span>Other Income (₹/yr)</span></div>
+    <input type="number" id="n-othInc" value="0" oninput="syncAndCalc('othInc',this.value)">
+  </div>
+</div>
+</div><!-- end left -->
+
+<!-- RIGHT: New Regime Results -->
+<div>
+<div class="card" style="margin-bottom:1rem">
+  <div class="ct">CTC Summary — A + B + C</div>
+  <div class="sg" id="n-ctcSum"></div>
+</div>
+
+<div class="single-box" id="n-resultbox">
+  <div class="blbl">🟢 New Regime — Annual Tax</div>
+  <div class="btx" id="n-tax">₹0</div>
+  <div class="bsb">Monthly take-home (base)</div>
+  <div class="bth" id="n-th">₹0</div>
+  <div class="bef" id="n-eff">0% effective</div>
+</div>
+
+<div class="card">
+  <div class="ct">Monthly In-Hand — New Regime</div>
+  <div id="n-inhand" class="regime-block rb-new"></div>
+  <div class="sg" style="margin-top:.7rem" id="n-inhand-var"></div>
+</div>
+
+<div class="card">
+  <div class="ct">Month-wise Take-Home — Full Year <span style="font-size:.68rem;font-weight:400;color:var(--amber)"> &nbsp;🟡 = variable pay month</span></div>
+  <div style="overflow-x:auto">
+    <table class="mt">
+      <thead><tr><th>Month</th><th>Base Gross</th><th>Variable</th><th>Tax</th><th>Net in Hand</th></tr></thead>
+      <tbody id="n-mtbody"></tbody>
+      <tfoot><tr><td>Full Year</td><td id="n-ftb"></td><td id="n-ftv"></td><td id="n-ftot"></td><td id="n-fton"></td></tr></tfoot>
+    </table>
+  </div>
+</div>
+
+<div class="card">
+  <div class="ct">New Regime — Tax Computation</div>
+  <div class="sg" id="n-nbuild"></div>
+  <hr class="dv">
+  <div class="sg" id="n-nslabs"></div>
+  <div class="sg" style="margin-top:5px" id="n-nsum"></div>
+  <div class="ht" style="margin-top:.7rem">🟢 Default from FY 2025-26. Income up to <b>₹12.75L = zero tax</b> (₹12L 87A rebate + ₹75K std deduction).</div>
+</div>
+</div><!-- end right -->
+</div><!-- end grid -->
+<div style="text-align:center;margin:0 0 1.5rem">
+  <button onclick="resetAll()" style="font-family:var(--fb);font-size:.82rem;font-weight:600;padding:10px 28px;border-radius:8px;border:1.5px solid var(--coral);background:#fff;color:var(--coral);cursor:pointer;transition:all .15s" onmouseover="this.style.background='var(--coral)';this.style.color='#fff'" onmouseout="this.style.background='#fff';this.style.color='var(--coral)'">🔄 Reset All</button>
+</div>
+</div><!-- end taxpage-new -->
+
+<!-- ══════════════════════════════════════════════
+     TAX SUB-PAGE: OLD REGIME
+══════════════════════════════════════════════ -->
+<div class="tax-sub-page" id="taxpage-old">
+<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;margin-bottom:.2rem">
+  <h1 style="margin-bottom:0">🟡 Old Regime Calculator <span style="font-size:.9rem;font-weight:400;color:var(--muted)">India — FY 2025-26</span></h1>
+  <button onclick="resetAll()" title="Clear all text fields" style="font-family:var(--fb);font-size:.78rem;font-weight:600;padding:7px 16px;border-radius:8px;border:1.5px solid var(--coral);background:#fff;color:var(--coral);cursor:pointer;white-space:nowrap;flex-shrink:0;transition:all .15s;margin-top:4px" onmouseover="this.style.background='var(--coral)';this.style.color='#fff'" onmouseout="this.style.background='#fff';this.style.color='var(--coral)'">🔄 Reset</button>
+</div>
+<div class="sub">Deductions apply · HRA · 80C · 80D · Home Loan · Opt-in annually</div>
+<div style="background:#fffbeb;border:1px solid #fcd34d;border-left:4px solid #d97706;border-radius:10px;padding:10px 15px;margin-bottom:1.2rem;font-size:.8rem;color:#78350f;line-height:1.7">
+  <span style="font-weight:700;font-size:.83rem">🟡 Old Regime — FY 2025-26</span><br>
+  Must opt-in at the start of the year. Standard deduction ₹50,000. Allows HRA, 80C, 80D, Home Loan Interest, LTA and other deductions. Higher slab rates but deductions can significantly reduce taxable income.
+</div>
+<div class="grid">
+<!-- LEFT: Inputs -->
+<div>
+<div class="card">
+  <div class="ct-a">A — Fixed Pay</div>
+  <div class="ib">📌 Enter <b>Basic salary</b> from your CTC letter.</div>
+  <div class="f">
+    <div class="fl"><span>Basic Salary (₹/yr) <span style="color:var(--coral);font-size:.68rem;font-weight:600;text-transform:none;letter-spacing:0">← Root value. Enter this first.</span></span></div>
+    <input type="number" id="o-basic" value="675750" oninput="syncAndCalc('basic',this.value)" onchange="syncAndCalc('basic',this.value)">
+  </div>
+  <div class="f">
+    <div class="fl"><span>Fixed Pay A Total (₹/yr — from CTC letter)</span></div>
+    <input type="number" id="o-fixedAT" value="1275000" oninput="syncAndCalc('fixedAT',this.value)" onchange="syncAndCalc('fixedAT',this.value)">
+    <div class="ht">Special Allowance = A − Basic − HRA − Conveyance (auto-fills as residual)</div>
+  </div>
+  <div class="r2">
+    <div class="f">
+      <div class="fl"><span>City Type</span></div>
+      <select id="o-city" onchange="syncAndCalc('city',this.value)">
+        <option value="metro" selected>Metro — HRA 50%</option>
+        <option value="nonmetro">Non-Metro — HRA 40%</option>
+      </select>
+    </div>
+    <div class="f">
+      <div class="fl"><span>HRA</span><span class="cv" id="o-hraLbl">50% of Basic</span></div>
+      <input id="o-hra" class="au" readonly>
+    </div>
+  </div>
+  <div class="r2">
+    <div class="f">
+      <div class="fl"><span>Conveyance</span><span class="cv">15% of Basic</span></div>
+      <input id="o-conv" class="au" readonly>
+    </div>
+    <div class="f">
+      <div class="fl"><span>Special Allowance</span><span class="cv">Residual</span></div>
+      <input id="o-spl" class="au" readonly>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="ct-a">Flexible Benefits <span style="font-size:.68rem;font-weight:400;text-transform:none;letter-spacing:0;color:var(--green)">(optional — employer-provided)</span></div>
+  <div class="f">
+    <div class="fl"><span>Food/Meal Coupons (₹/month) <span class="tg b">Both regimes</span></span></div>
+    <div class="fsteps" id="o-fsteps">
+      <button class="fbtn on" onclick="setFoodO(0,this)">₹0</button>
+      <button class="fbtn" onclick="setFoodO(2200,this)">₹2,200</button>
+      <button class="fbtn" onclick="setFoodO(4400,this)">₹4,400</button>
+      <button class="fbtn" onclick="setFoodO(6600,this)">₹6,600</button>
+      <button class="fbtn" onclick="setFoodO(8800,this)">₹8,800</button>
+    </div>
+    <div class="ht">Non-cash — not to bank. Tax-exempt in both regimes (IT Act 2025).</div>
+  </div>
+  <hr class="dv">
+  <div class="f">
+    <div class="fl"><span>Employer NPS 80CCD(2) (% of Basic) <span class="tg b">Both</span></span><span class="sv" id="o-npsPctV">0% = ₹0/mo</span></div>
+    <div class="slw"><input type="range" id="o-npsPct" min="0" max="14" step="1" value="0" oninput="syncAndCalc('npsPct',this.value)"></div>
+    <div class="ht">To NPS account — not bank. Reduces taxable in both regimes.</div>
+  </div>
+  <hr class="dv">
+  <div class="f">
+    <div class="fl"><span>Mobile Reimbursement (₹/mo) <span class="tg b">Both</span></span></div>
+    <input type="number" id="o-mobile" value="0" placeholder="e.g. 1500" oninput="syncAndCalc('mobile',this.value)">
+  </div>
+</div>
+
+<div class="card">
+  <div class="ct-b">B — Retirals (Employer provisions — not your cash)</div>
+  <div class="wb">PF goes to EPF account. Gratuity paid only on exit (5+ yrs). Neither comes to bank monthly.</div>
+  <div class="f">
+    <div class="fl"><span>PF Option</span></div>
+    <select id="o-pfopt" onchange="syncAndCalc('pfopt',this.value)">
+      <option value="1" selected>Option 1 — 12% of Actual Basic (higher corpus)</option>
+      <option value="2">Option 2 — 12% of ₹15,000 ceiling = ₹1,800/mo</option>
+    </select>
+  </div>
+  <div class="r2">
+    <div class="f">
+      <div class="fl"><span>Employer PF</span><span class="cv" id="o-pferLbl">12% of Basic</span></div>
+      <input id="o-pfEr" class="au" readonly>
+    </div>
+    <div class="f">
+      <div class="fl"><span>Employee PF</span><span class="cv" id="o-pfempLbl">12% of Basic</span></div>
+      <input id="o-pfEmp" class="au" readonly>
+    </div>
+  </div>
+  <div class="r2">
+    <div class="f">
+      <div class="fl"><span>Gratuity %</span><span class="sv" id="o-gratV">5.95%</span></div>
+      <div class="slw"><input type="range" id="o-gratPct" min="4.81" max="8" step="0.0001" value="5.9489" oninput="syncAndCalc('gratPct',this.value)"></div>
+    </div>
+    <div class="f">
+      <div class="fl"><span>Gratuity (₹/yr)</span><span class="cv">% of Basic</span></div>
+      <input id="o-grat" class="au" readonly>
+    </div>
+  </div>
+  <div class="f">
+    <div class="fl"><span>Retirals Total (B)</span><span class="cv">Employer PF + Gratuity</span></div>
+    <input id="o-retB" class="au" readonly>
+  </div>
+</div>
+
+<div class="card">
+  <div class="ct-c">C — Variable Pay (Performance-based)</div>
+  <div class="ib">Fully taxable as salary. TDS spikes in the payment month.</div>
+  <div class="r2">
+    <div class="f">
+      <div class="fl"><span>Variable Pay Target (₹/yr)</span></div>
+      <input type="number" id="o-varP" value="25500" oninput="syncVFO()">
+    </div>
+    <div class="f">
+      <div class="fl"><span>Premium Bonus Target (₹/yr)</span></div>
+      <input type="number" id="o-premB" value="38138" oninput="syncVFO()">
+    </div>
+  </div>
+  <div class="f">
+    <div class="fl"><span>Expected Payout %</span><span class="sv" id="o-varPctV">100%</span></div>
+    <div class="slw"><input type="range" id="o-varPct" min="0" max="150" step="5" value="100" oninput="syncAndCalc('varPct',this.value)"></div>
+  </div>
+  <div class="r2">
+    <div class="f">
+      <div class="fl"><span>Variable Frequency</span></div>
+      <select id="o-varFreq" onchange="syncVFO()">
+        <option value="annual">Annual</option>
+        <option value="biannual" selected>Bi-Annual</option>
+        <option value="quarterly">Quarterly</option>
+      </select>
+    </div>
+    <div class="f">
+      <div class="fl"><span>Premium Frequency</span></div>
+      <select id="o-premFreq" onchange="syncVFO()">
+        <option value="annual" selected>Annual</option>
+        <option value="biannual">Bi-Annual</option>
+        <option value="quarterly">Quarterly</option>
+      </select>
+    </div>
+  </div>
+  <div id="o-vmi" style="margin-top:.5rem"></div>
+</div>
+
+<div class="card">
+  <div class="ct-c">Leave Encashment &amp; Shift Allowance</div>
+  <div class="f">
+    <div class="fl"><span>Leave Encashment — Days to Encash</span></div>
+    <input type="number" id="o-leavedays" value="0" placeholder="e.g. 10" oninput="syncAndCalc('leavedays',this.value)">
+  </div>
+  <div class="r2">
+    <div class="f">
+      <div class="fl"><span>Payment Month</span></div>
+      <select id="o-leavemo" onchange="syncAndCalc('leavemo',this.value)">
+        <option value="Apr">April</option><option value="May">May</option>
+        <option value="Jun">June</option><option value="Jul">July</option>
+        <option value="Aug">August</option><option value="Sep">September</option>
+        <option value="Oct">October</option><option value="Nov">November</option>
+        <option value="Dec">December</option><option value="Jan" selected>January</option>
+        <option value="Feb">February</option><option value="Mar">March</option>
+      </select>
+    </div>
+    <div class="f">
+      <div class="fl"><span>Leave Encashment Amount</span><span class="cv" id="o-leaveAmtLbl">₹0</span></div>
+      <input id="o-leaveAmtDisp" class="au" readonly>
+    </div>
+  </div>
+  <hr class="dv">
+  <div class="f">
+    <div class="fl"><span>Shift Allowance (₹/month)</span></div>
+    <input type="number" id="o-shiftmo" value="0" placeholder="e.g. 2000" oninput="syncAndCalc('shiftmo',this.value)">
+  </div>
+</div>
+
+<div class="card">
+  <div class="ct">Old Regime Only — Deductions</div>
+  <div class="wb">⚠️ These deductions apply <b>only</b> in Old Regime. Employee PF auto-counts toward 80C (max ₹1.5L).</div>
+  <div class="r2">
+    <div class="f">
+      <div class="fl"><span>Monthly Rent (₹) <span class="tg o">HRA</span></span></div>
+      <input type="number" id="o-rent" value="0" placeholder="0 if not claiming" oninput="syncAndCalc('rent',this.value)">
+    </div>
+    <div class="f">
+      <div class="fl"><span>LTA (₹/yr) <span class="tg o">Old</span></span></div>
+      <input type="number" id="o-lta" value="0" oninput="syncAndCalc('lta',this.value)">
+    </div>
+  </div>
+  <div class="r2">
+    <div class="f">
+      <div class="fl"><span>Books/Tel/PDA (₹/yr) <span class="tg o">Old</span></span></div>
+      <input type="number" id="o-otherA" value="0" oninput="syncAndCalc('otherA',this.value)">
+    </div>
+    <div class="f">
+      <div class="fl"><span>80D Medical (max ₹50k)</span></div>
+      <input type="number" id="o-d80d" value="0" oninput="syncAndCalc('d80d',this.value)">
+    </div>
+  </div>
+  <div class="r2">
+    <div class="f">
+      <div class="fl"><span>Home Loan Interest (max ₹2L)</span></div>
+      <input type="number" id="o-hli" value="0" oninput="syncAndCalc('hli',this.value)">
+    </div>
+    <div class="f">
+      <div class="fl"><span>NPS Self 80CCD(1B) (max ₹50k)</span></div>
+      <input type="number" id="o-npsSelf" value="0" oninput="syncAndCalc('npsSelf',this.value)">
+    </div>
+  </div>
+  <div class="r2">
+    <div class="f">
+      <div class="fl"><span>Other Deductions (₹/yr)</span></div>
+      <input type="number" id="o-othDed" value="0" oninput="syncAndCalc('othDed',this.value)">
+    </div>
+    <div class="f">
+      <div class="fl"><span>Other Income (₹/yr)</span></div>
+      <input type="number" id="o-othInc" value="0" oninput="syncAndCalc('othInc',this.value)">
+    </div>
+  </div>
+</div>
+</div><!-- end left -->
+
+<!-- RIGHT: Old Regime Results -->
+<div>
+<div class="card" style="margin-bottom:1rem">
+  <div class="ct">CTC Summary — A + B + C</div>
+  <div class="sg" id="o-ctcSum"></div>
+</div>
+
+<div class="single-box single-box-old" id="o-resultbox">
+  <div class="blbl">🟡 Old Regime — Annual Tax</div>
+  <div class="btx" id="o-tax">₹0</div>
+  <div class="bsb">Monthly take-home (base)</div>
+  <div class="bth" id="o-th">₹0</div>
+  <div class="bef" id="o-eff">0% effective</div>
+</div>
+
+<div class="card">
+  <div class="ct">Monthly In-Hand — Old Regime</div>
+  <div id="o-inhand" class="regime-block rb-old"></div>
+  <div class="sg" style="margin-top:.7rem" id="o-inhand-var"></div>
+</div>
+
+<div class="card">
+  <div class="ct">Month-wise Take-Home — Full Year <span style="font-size:.68rem;font-weight:400;color:var(--amber)"> &nbsp;🟡 = variable pay month</span></div>
+  <div style="overflow-x:auto">
+    <table class="mt">
+      <thead><tr><th>Month</th><th>Base Gross</th><th>Variable</th><th>Tax</th><th>Net in Hand</th></tr></thead>
+      <tbody id="o-mtbody"></tbody>
+      <tfoot><tr><td>Full Year</td><td id="o-ftb"></td><td id="o-ftv"></td><td id="o-ftot"></td><td id="o-fton"></td></tr></tfoot>
+    </table>
+  </div>
+</div>
+
+<div class="card">
+  <div class="ct">Old Regime — Tax Computation</div>
+  <div class="sg" id="o-obuild"></div>
+  <hr class="dv">
+  <div class="sg" id="o-oslabs"></div>
+  <div class="sg" style="margin-top:5px" id="o-osum"></div>
+</div>
+</div><!-- end right -->
+</div><!-- end grid -->
+<div style="text-align:center;margin:0 0 1.5rem">
+  <button onclick="resetAll()" style="font-family:var(--fb);font-size:.82rem;font-weight:600;padding:10px 28px;border-radius:8px;border:1.5px solid var(--coral);background:#fff;color:var(--coral);cursor:pointer;transition:all .15s" onmouseover="this.style.background='var(--coral)';this.style.color='#fff'" onmouseout="this.style.background='#fff';this.style.color='var(--coral)'">🔄 Reset All</button>
+</div>
+</div><!-- end taxpage-old -->
+
+<!-- ══════════════════════════════════════════════
+     TAX SUB-PAGE: NEW vs OLD COMPARISON
+══════════════════════════════════════════════ -->
+<div class="tax-sub-page" id="taxpage-compare">
+<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;margin-bottom:.2rem">
+  <h1 style="margin-bottom:0">⚖️ New vs Old Regime <span style="font-size:.9rem;font-weight:400;color:var(--muted)">India — FY 2025-26</span></h1>
   <button onclick="resetAll()" title="Clear all text fields to start fresh" style="font-family:var(--fb);font-size:.78rem;font-weight:600;padding:7px 16px;border-radius:8px;border:1.5px solid var(--coral);background:#fff;color:var(--coral);cursor:pointer;white-space:nowrap;flex-shrink:0;transition:all .15s;margin-top:4px" onmouseover="this.style.background='var(--coral)';this.style.color='#fff'" onmouseout="this.style.background='#fff';this.style.color='var(--coral)'">🔄 Reset</button>
 </div>
 <div class="sub">Basic salary drives all CTC components · Correct slabs · 87A rebate · Variable pay · Month-wise take-home</div>
@@ -339,34 +914,34 @@ tbody td:first-child{text-align:left;color:var(--muted)}
   <div class="ib">📌 Enter <b>Basic salary</b> from your CTC letter. HRA, Conveyance, Employer PF and Gratuity all auto-compute from it. Special Allowance fills the residual.</div>
   <div class="f">
     <div class="fl"><span>Basic Salary (₹/yr) <span style="color:var(--coral);font-size:.68rem;font-weight:600;text-transform:none;letter-spacing:0">← Root value. Enter this first.</span></span></div>
-    <input type="number" id="basic" value="675750" oninput="calc()" onchange="calc()">
+    <input type="number" id="c-basic" value="675750" oninput="syncAndCalc('basic',this.value)" onchange="syncAndCalc('basic',this.value)">
   </div>
   <div class="f">
     <div class="fl"><span>Fixed Pay A Total (₹/yr — from CTC letter)</span></div>
-    <input type="number" id="fixedAT" value="1275000" oninput="calc()" onchange="calc()">
+    <input type="number" id="c-fixedAT" value="1275000" oninput="syncAndCalc('fixedAT',this.value)" onchange="syncAndCalc('fixedAT',this.value)">
     <div class="ht">Special Allowance = A − Basic − HRA − Conveyance (auto-fills as residual)</div>
   </div>
   <div class="r2">
     <div class="f">
       <div class="fl"><span>City Type</span></div>
-      <select id="city" onchange="calc()">
+      <select id="c-city" onchange="syncAndCalc('city',this.value)">
         <option value="metro" selected>Metro — HRA 50%</option>
         <option value="nonmetro">Non-Metro — HRA 40%</option>
       </select>
     </div>
     <div class="f">
-      <div class="fl"><span>HRA</span><span class="cv" id="hraLbl">50% of Basic</span></div>
-      <input id="hra" class="au" readonly>
+      <div class="fl"><span>HRA</span><span class="cv" id="c-hraLbl">50% of Basic</span></div>
+      <input id="c-hra" class="au" readonly>
     </div>
   </div>
   <div class="r2">
     <div class="f">
       <div class="fl"><span>Conveyance</span><span class="cv">15% of Basic</span></div>
-      <input id="conv" class="au" readonly>
+      <input id="c-conv" class="au" readonly>
     </div>
     <div class="f">
       <div class="fl"><span>Special Allowance</span><span class="cv">Residual</span></div>
-      <input id="spl" class="au" readonly>
+      <input id="c-spl" class="au" readonly>
     </div>
   </div>
 </div>
@@ -375,26 +950,26 @@ tbody td:first-child{text-align:left;color:var(--muted)}
   <div class="ct-a">Flexible Benefits <span style="font-size:.68rem;font-weight:400;text-transform:none;letter-spacing:0;color:var(--green)">(optional — employer-provided)</span></div>
   <div class="f">
     <div class="fl"><span>Food/Meal Coupons (₹/month) <span class="tg b">Both regimes</span></span></div>
-    <div class="fsteps">
-      <button class="fbtn on" onclick="setFood(0,this)">₹0</button>
-      <button class="fbtn" onclick="setFood(2200,this)">₹2,200</button>
-      <button class="fbtn" onclick="setFood(4400,this)">₹4,400</button>
-      <button class="fbtn" onclick="setFood(6600,this)">₹6,600</button>
-      <button class="fbtn" onclick="setFood(8800,this)">₹8,800</button>
+    <div class="fsteps" id="c-fsteps">
+      <button class="fbtn on" onclick="setFoodC(0,this)">₹0</button>
+      <button class="fbtn" onclick="setFoodC(2200,this)">₹2,200</button>
+      <button class="fbtn" onclick="setFoodC(4400,this)">₹4,400</button>
+      <button class="fbtn" onclick="setFoodC(6600,this)">₹6,600</button>
+      <button class="fbtn" onclick="setFoodC(8800,this)">₹8,800</button>
     </div>
-    <input type="hidden" id="foodMo" value="0">
+    <input type="hidden" id="c-foodMo" value="0">
     <div class="ht">Non-cash — not to bank. Tax-exempt in both regimes (IT Act 2025).</div>
   </div>
   <hr class="dv">
   <div class="f">
-    <div class="fl"><span>Employer NPS 80CCD(2) (% of Basic) <span class="tg b">Both</span></span><span class="sv" id="npsPctV">0% = ₹0/mo</span></div>
-    <div class="slw"><input type="range" id="npsPct" min="0" max="14" step="1" value="0" oninput="calc()"></div>
+    <div class="fl"><span>Employer NPS 80CCD(2) (% of Basic) <span class="tg b">Both</span></span><span class="sv" id="c-npsPctV">0% = ₹0/mo</span></div>
+    <div class="slw"><input type="range" id="c-npsPct" min="0" max="14" step="1" value="0" oninput="syncAndCalc('npsPct',this.value)"></div>
     <div class="ht">To NPS account — not bank. Reduces taxable in both regimes.</div>
   </div>
   <hr class="dv">
   <div class="f">
     <div class="fl"><span>Mobile Reimbursement (₹/mo) <span class="tg b">Both</span></span></div>
-    <input type="number" id="mobile" value="0" placeholder="e.g. 1500">
+    <input type="number" id="c-mobile" value="0" placeholder="e.g. 1500" oninput="syncAndCalc('mobile',this.value)">
   </div>
 </div>
 
@@ -403,35 +978,35 @@ tbody td:first-child{text-align:left;color:var(--muted)}
   <div class="wb">PF goes to EPF account. Gratuity paid only on exit (5+ yrs). Neither comes to bank monthly.</div>
   <div class="f">
     <div class="fl"><span>PF Option</span></div>
-    <select id="pfopt" onchange="calc()">
+    <select id="c-pfopt" onchange="syncAndCalc('pfopt',this.value)">
       <option value="1" selected>Option 1 — 12% of Actual Basic (higher corpus)</option>
       <option value="2">Option 2 — 12% of ₹15,000 ceiling = ₹1,800/mo</option>
     </select>
   </div>
   <div class="r2">
     <div class="f">
-      <div class="fl"><span>Employer PF</span><span class="cv" id="pferLbl">12% of Basic</span></div>
-      <input id="pfEr" class="au" readonly>
+      <div class="fl"><span>Employer PF</span><span class="cv" id="c-pferLbl">12% of Basic</span></div>
+      <input id="c-pfEr" class="au" readonly>
     </div>
     <div class="f">
-      <div class="fl"><span>Employee PF</span><span class="cv" id="pfempLbl">12% of Basic</span></div>
-      <input id="pfEmp" class="au" readonly>
+      <div class="fl"><span>Employee PF</span><span class="cv" id="c-pfempLbl">12% of Basic</span></div>
+      <input id="c-pfEmp" class="au" readonly>
     </div>
   </div>
   <div class="r2">
     <div class="f">
-      <div class="fl"><span>Gratuity %</span><span class="sv" id="gratV">5.95%</span></div>
-      <div class="slw"><input type="range" id="gratPct" min="4.81" max="8" step="0.0001" value="5.9489" oninput="calc()"></div>
+      <div class="fl"><span>Gratuity %</span><span class="sv" id="c-gratV">5.95%</span></div>
+      <div class="slw"><input type="range" id="c-gratPct" min="4.81" max="8" step="0.0001" value="5.9489" oninput="syncAndCalc('gratPct',this.value)"></div>
       <div class="ht">Standard = 4.81%. Your CTC letter implies ~5.95%.</div>
     </div>
     <div class="f">
       <div class="fl"><span>Gratuity (₹/yr)</span><span class="cv">% of Basic</span></div>
-      <input id="grat" class="au" readonly>
+      <input id="c-grat" class="au" readonly>
     </div>
   </div>
   <div class="f">
     <div class="fl"><span>Retirals Total (B)</span><span class="cv">Employer PF + Gratuity</span></div>
-    <input id="retB" class="au" readonly>
+    <input id="c-retB" class="au" readonly>
   </div>
 </div>
 
@@ -441,23 +1016,23 @@ tbody td:first-child{text-align:left;color:var(--muted)}
   <div class="r2">
     <div class="f">
       <div class="fl"><span>Variable Pay Target (₹/yr)</span></div>
-      <input type="number" id="varP" value="25500" oninput="setVF()" onchange="setVF()">
+      <input type="number" id="c-varP" value="25500" oninput="syncVFC()">
     </div>
     <div class="f">
       <div class="fl"><span>Premium Bonus Target (₹/yr)</span></div>
-      <input type="number" id="premB" value="38138" oninput="setVF()" onchange="setVF()">
+      <input type="number" id="c-premB" value="38138" oninput="syncVFC()">
       <div class="ht">0 if not applicable.</div>
     </div>
   </div>
   <div class="f">
-    <div class="fl"><span>Expected Payout %</span><span class="sv" id="varPctV">100%</span></div>
-    <div class="slw"><input type="range" id="varPct" min="0" max="150" step="5" value="100" oninput="calc()"></div>
+    <div class="fl"><span>Expected Payout %</span><span class="sv" id="c-varPctV">100%</span></div>
+    <div class="slw"><input type="range" id="c-varPct" min="0" max="150" step="5" value="100" oninput="syncAndCalc('varPct',this.value)"></div>
     <div class="ht">0% = none · 100% = full target · 150% = over-performance. Applies to both.</div>
   </div>
   <div class="r2">
     <div class="f">
       <div class="fl"><span>Variable Frequency</span></div>
-      <select id="varFreq" onchange="setVF()">
+      <select id="c-varFreq" onchange="syncVFC()">
         <option value="annual">Annual</option>
         <option value="biannual" selected>Bi-Annual</option>
         <option value="quarterly">Quarterly</option>
@@ -465,15 +1040,15 @@ tbody td:first-child{text-align:left;color:var(--muted)}
     </div>
     <div class="f">
       <div class="fl"><span>Premium Frequency</span></div>
-      <select id="premFreq" onchange="setVF()">
+      <select id="c-premFreq" onchange="syncVFC()">
         <option value="annual" selected>Annual</option>
         <option value="biannual">Bi-Annual</option>
         <option value="quarterly">Quarterly</option>
       </select>
     </div>
   </div>
-  <div id="vmi" style="margin-top:.5rem"></div>
-  <div class="sg" id="vsum" style="margin-top:.7rem"></div>
+  <div id="c-vmi" style="margin-top:.5rem"></div>
+  <div class="sg" id="c-vsum" style="margin-top:.7rem"></div>
 </div>
 
 <div class="card">
@@ -481,13 +1056,13 @@ tbody td:first-child{text-align:left;color:var(--muted)}
 <div class="ib">💡 <b>Leave Encashment (in-service):</b> Fully taxable as salary. Value = Basic÷30 × days. Added in the selected month. &nbsp;|&nbsp; <b>Shift Allowance:</b> Fully taxable in both regimes — added every month.</div>
 <div class="f">
   <div class="fl"><span>Leave Encashment — Days to Encash</span></div>
-  <input type="number" id="leavedays" value="0" placeholder="e.g. 10" oninput="calc()" onchange="calc()">
+  <input type="number" id="c-leavedays" value="0" placeholder="e.g. 10" oninput="syncAndCalc('leavedays',this.value)" onchange="syncAndCalc('leavedays',this.value)">
   <div class="ht">Per day = Basic ÷ 30. Fully taxable in month paid. Section 89 relief may apply at ITR filing.</div>
 </div>
 <div class="r2">
   <div class="f">
     <div class="fl"><span>Payment Month</span></div>
-    <select id="leavemo" onchange="calc()">
+    <select id="c-leavemo" onchange="syncAndCalc('leavemo',this.value)">
       <option value="Apr">April</option><option value="May">May</option>
       <option value="Jun">June</option><option value="Jul">July</option>
       <option value="Aug">August</option><option value="Sep">September</option>
@@ -497,15 +1072,15 @@ tbody td:first-child{text-align:left;color:var(--muted)}
     </select>
   </div>
   <div class="f">
-    <div class="fl"><span>Leave Encashment Amount</span><span class="cv" id="leaveAmtLbl">₹0</span></div>
-    <input id="leaveAmtDisp" class="au" readonly>
+    <div class="fl"><span>Leave Encashment Amount</span><span class="cv" id="c-leaveAmtLbl">₹0</span></div>
+    <input id="c-leaveAmtDisp" class="au" readonly>
     <div class="ht">Auto: Basic ÷ 30 × days</div>
   </div>
 </div>
 <hr class="dv">
 <div class="f">
   <div class="fl"><span>Shift Allowance (₹/month)</span></div>
-  <input type="number" id="shiftmo" value="0" placeholder="e.g. 2000" oninput="calc()" onchange="calc()">
+  <input type="number" id="c-shiftmo" value="0" placeholder="e.g. 2000" oninput="syncAndCalc('shiftmo',this.value)" onchange="syncAndCalc('shiftmo',this.value)">
   <div class="ht">Fully taxable in both regimes. Added to monthly gross every month.</div>
 </div>
 </div>
@@ -516,48 +1091,48 @@ tbody td:first-child{text-align:left;color:var(--muted)}
   <div class="r2">
     <div class="f">
       <div class="fl"><span>Monthly Rent (₹) <span class="tg o">HRA</span></span></div>
-      <input type="number" id="rent" value="0" placeholder="0 if not claiming">
+      <input type="number" id="c-rent" value="0" placeholder="0 if not claiming" oninput="syncAndCalc('rent',this.value)">
     </div>
     <div class="f">
       <div class="fl"><span>LTA (₹/yr) <span class="tg o">Old</span></span></div>
-      <input type="number" id="lta" value="0" oninput="calc()">
+      <input type="number" id="c-lta" value="0" oninput="syncAndCalc('lta',this.value)">
     </div>
   </div>
   <div class="r2">
     <div class="f">
       <div class="fl"><span>Books/Tel/PDA (₹/yr) <span class="tg o">Old</span></span></div>
-      <input type="number" id="otherA" value="0" oninput="calc()">
+      <input type="number" id="c-otherA" value="0" oninput="syncAndCalc('otherA',this.value)">
     </div>
     <div class="f">
       <div class="fl"><span>80D Medical (max ₹50k)</span></div>
-      <input type="number" id="d80d" value="0" oninput="calc()">
+      <input type="number" id="c-d80d" value="0" oninput="syncAndCalc('d80d',this.value)">
     </div>
   </div>
   <div class="r2">
     <div class="f">
       <div class="fl"><span>Home Loan Interest (max ₹2L)</span></div>
-      <input type="number" id="hli" value="0" oninput="calc()">
+      <input type="number" id="c-hli" value="0" oninput="syncAndCalc('hli',this.value)">
     </div>
     <div class="f">
       <div class="fl"><span>NPS Self 80CCD(1B) (max ₹50k)</span></div>
-      <input type="number" id="npsSelf" value="0" oninput="calc()">
+      <input type="number" id="c-npsSelf" value="0" oninput="syncAndCalc('npsSelf',this.value)">
     </div>
   </div>
   <div class="r2">
     <div class="f">
       <div class="fl"><span>Other Deductions (₹/yr)</span></div>
-      <input type="number" id="othDed" value="0" oninput="calc()">
+      <input type="number" id="c-othDed" value="0" oninput="syncAndCalc('othDed',this.value)">
     </div>
     <div class="f">
       <div class="fl"><span>Other Income (₹/yr)</span></div>
-      <input type="number" id="othInc" value="0" oninput="calc()">
+      <input type="number" id="c-othInc" value="0" oninput="syncAndCalc('othInc',this.value)">
     </div>
   </div>
 </div>
 
 </div><!-- end left -->
 
-<!-- RIGHT -->
+<!-- RIGHT: Comparison Results -->
 <div>
 
 <div class="card" style="margin-bottom:1rem">
@@ -625,21 +1200,100 @@ tbody td:first-child{text-align:left;color:var(--muted)}
   <button onclick="resetAll()" style="font-family:var(--fb);font-size:.82rem;font-weight:600;padding:10px 28px;border-radius:8px;border:1.5px solid var(--coral);background:#fff;color:var(--coral);cursor:pointer;transition:all .15s" onmouseover="this.style.background='var(--coral)';this.style.color='#fff'" onmouseout="this.style.background='#fff';this.style.color='var(--coral)'">🔄 Reset All to Default</button>
 </div>
 </div><!-- end grid -->
-</div>
+</div><!-- end taxpage-compare -->
+
+</div><!-- end page-tax -->
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 <script>
 // ── NAVIGATION ──────────────────────────────────────────────────────────────
-function showPage(id,btn){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.tnav-btn').forEach(b=>b.classList.remove('active'));document.getElementById('page-'+id).classList.add('active');btn.classList.add('active');}
-function sub(pg,btn,id,pf){document.querySelectorAll(pg+' .stab').forEach(b=>b.classList.remove('active'));btn.classList.add('active');document.querySelectorAll(pg+' [id^="'+pf+'"]').forEach(el=>el.style.display='none');document.getElementById(pf+id).style.display='';}
-function sS(t,b){sub('#page-savings',b,t,'sv-')}
-function sMF(t,b){sub('#page-mf',b,t,'mf-')}
-function sR(t,b){sub('#page-retire',b,t,'rt-');if(t==='cmp')rCmp();}
-function sRL(t,b){sub('#page-realty',b,t,'rl-')}
-function sIN(t,b){sub('#page-insurance',b,t,'ins-')}
-function sBD(t,b){sub('#page-budget',b,t,'bd-')}
-function sKD(t,b){sub('#page-kids',b,t,'kd-')}
-function sIF(t,b){sub('#page-inflation',b,t,'if-')}
+function showPage(id,btn){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tnav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  btn.classList.add('active');
+  // Show/hide tax subtabs
+  const subtabs=document.getElementById('tax-subtabs');
+  if(id==='tax') subtabs.classList.remove('hidden');
+  else subtabs.classList.add('hidden');
+}
+
+// ── TAX SUB-TAB NAVIGATION ───────────────────────────────────────────────────
+function showTaxTab(tab, btn){
+  document.querySelectorAll('.tax-sub-page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tstab').forEach(b=>b.classList.remove('active'));
+  document.getElementById('taxpage-'+tab).classList.add('active');
+  btn.classList.add('active');
+  calc(); // recalculate for the newly visible tab
+}
+
+// ── SHARED STATE & SYNC ──────────────────────────────────────────────────────
+// Syncs a named value across all tab prefixes and re-calcs
+const TAB_PREFIXES = ['n', 'o', 'c'];
+function syncAndCalc(field, value){
+  document.getElementById(field).value = value;
+  // Mirror to all tab-prefixed elements
+  TAB_PREFIXES.forEach(p => {
+    const el = document.getElementById(p+'-'+field);
+    if(el && el !== document.activeElement) el.value = value;
+  });
+  calc();
+}
+
+// Food setters per-tab (syncs to all)
+function setFoodN(val,btn){
+  document.getElementById('foodMo').value=val;
+  syncFoodButtons(val);
+  calc();
+}
+function setFoodO(val,btn){
+  document.getElementById('foodMo').value=val;
+  syncFoodButtons(val);
+  calc();
+}
+function setFoodC(val,btn){
+  document.getElementById('foodMo').value=val;
+  document.getElementById('c-foodMo').value=val;
+  syncFoodButtons(val);
+  calc();
+}
+function syncFoodButtons(val){
+  // Sync all food button groups
+  ['n-fsteps','o-fsteps','c-fsteps'].forEach(id=>{
+    const grp=document.getElementById(id);
+    if(grp){
+      grp.querySelectorAll('.fbtn').forEach(b=>{
+        const bv=parseInt(b.textContent.replace(/[₹,]/g,''))||0;
+        b.classList.toggle('on', bv===val);
+      });
+    }
+  });
+}
+
+// Legacy setFood kept for any stray references
+function setFood(val,btn){ setFoodC(val,btn); }
+
+// Variable frequency sync
+function syncVFN(){ _syncVF('n'); }
+function syncVFO(){ _syncVF('o'); }
+function syncVFC(){ _syncVF('c'); }
+function _syncVF(src){
+  // Sync master hidden fields from source prefix
+  const fields=['varP','premB','varFreq','premFreq'];
+  fields.forEach(f=>{
+    const el=document.getElementById(src+'-'+f);
+    if(el) document.getElementById(f).value=el.value;
+  });
+  // Mirror to other prefixes
+  TAB_PREFIXES.filter(p=>p!==src).forEach(p=>{
+    fields.forEach(f=>{
+      const src_el=document.getElementById(src+'-'+f);
+      const dst_el=document.getElementById(p+'-'+f);
+      if(src_el&&dst_el&&dst_el!==document.activeElement) dst_el.value=src_el.value;
+    });
+  });
+  setVF();
+}
 
 // Loan type configs: [amount, rate, tenure, fee, minAmt, maxAmt, minRate, maxRate, maxTen, rateStep, amtStep]
 
@@ -802,12 +1456,7 @@ function applySlabs(taxable,slabs){
   }
   return{tax,rows};
 }
-function setFood(val,btn){
-  document.getElementById('foodMo').value=val;
-  document.querySelectorAll('.fbtn').forEach(b=>b.classList.remove('on'));
-  btn.classList.add('on');
-  calc();
-}
+// setFood is now handled by setFoodN/O/C above
 function getMonths(pre,freq){
   const c={annual:1,biannual:2,quarterly:4}[freq];
   const arr=[];
@@ -820,17 +1469,28 @@ function setVF(){
   const vd=VDEF[vf],pd=PDEF[pf];
   const vAmt=+document.getElementById('varP').value||0;
   const pAmt=+document.getElementById('premB').value||0;
-  function sels(pre,defs){
+  function sels(pre,defs,pfx=''){
     return defs.map((m,i)=>`<div class="f" style="flex:1;margin-bottom:0">
       <div class="fl"><span>${pre==='V'?'Variable':'Premium'} Payment ${defs.length>1?i+1:''} Month</span></div>
-      <select id="${pre}M${i}" onchange="calc()">
+      <select id="${pfx}${pre}M${i}" onchange="calc()">
         ${MONTHS.map(mo=>`<option${mo===m?' selected':''}>${mo}</option>`).join('')}
       </select></div>`).join('');
   }
+  // Populate compare tab (c-vmi)
   let html='';
-  if(vAmt>0) html+=`<div style="display:flex;gap:.8rem;margin-bottom:.7rem">${sels('V',vd)}</div>`;
-  if(pAmt>0) html+=`<div style="display:flex;gap:.8rem">${sels('P',pd)}</div>`;
-  document.getElementById('vmi').innerHTML=html;
+  if(vAmt>0) html+=`<div style="display:flex;gap:.8rem;margin-bottom:.7rem">${sels('V',vd,'')}</div>`;
+  if(pAmt>0) html+=`<div style="display:flex;gap:.8rem">${sels('P',pd,'')}</div>`;
+  document.getElementById('c-vmi').innerHTML=html;
+  // Populate new regime tab (n-vmi)
+  let htmlN='';
+  if(vAmt>0) htmlN+=`<div style="display:flex;gap:.8rem;margin-bottom:.7rem">${sels('V',vd,'n-')}</div>`;
+  if(pAmt>0) htmlN+=`<div style="display:flex;gap:.8rem">${sels('P',pd,'n-')}</div>`;
+  document.getElementById('n-vmi').innerHTML=htmlN;
+  // Populate old regime tab (o-vmi)
+  let htmlO='';
+  if(vAmt>0) htmlO+=`<div style="display:flex;gap:.8rem;margin-bottom:.7rem">${sels('V',vd,'o-')}</div>`;
+  if(pAmt>0) htmlO+=`<div style="display:flex;gap:.8rem">${sels('P',pd,'o-')}</div>`;
+  document.getElementById('o-vmi').innerHTML=htmlO;
   calc();
 }
 function computeTax(inc,regime,npsErAnn,foodAnn,mobileAnn,hraEx,lta,otherA,pf80C,d80d,hli,npsSelf,othDed){
@@ -854,8 +1514,11 @@ function computeTax(inc,regime,npsErAnn,foodAnn,mobileAnn,hraEx,lta,otherA,pf80C
 }
 function setAu(id,val){
   const el=document.getElementById(id);
-  el.value=Math.round(val);
+  if(el) el.value=Math.round(val);
 }
+
+// TAX_PREFIXES for syncing across sub-tabs
+const TAX_PREFIXES=['n','o','c'];
 
 function calc(){
   const basic=+document.getElementById('basic').value||0;
@@ -868,8 +1531,8 @@ function calc(){
   const spl=fixedAT>0?Math.max(0,fixedAT-basic-hra-conv):Math.round(basic*0.20);
   const fixedA=basic+hra+conv+spl;
 
-  setAu('hra',hra); setAu('conv',conv); setAu('spl',spl);
-  document.getElementById('hraLbl').textContent=`${(hraRate*100).toFixed(0)}% of Basic`;
+  ['c','n','o'].forEach(p=>{setAu(p+'-hra',hra);setAu(p+'-conv',conv);setAu(p+'-spl',spl);});
+  ['c','n','o'].forEach(p=>{const el=document.getElementById(p+'-hraLbl');if(el)el.textContent=`${(hraRate*100).toFixed(0)}% of Basic`;});
 
   const pfopt=document.getElementById('pfopt').value;
   // PF: calculate on annual basic directly to avoid monthly rounding errors
@@ -882,10 +1545,10 @@ function calc(){
   const gratPct=+document.getElementById('gratPct').value;
   const gratAnn=Math.round(basic*gratPct/100);
   const retB=pfErAnn+gratAnn;
-  document.getElementById('gratV').textContent=pc(gratPct,4);
-  document.getElementById('pferLbl').textContent=pfopt==='2'?'12% of ₹15k':'12% of Basic';
-  document.getElementById('pfempLbl').textContent=pfopt==='2'?'12% of ₹15k':'12% of Basic';
-  setAu('pfEr',pfErAnn); setAu('pfEmp',pfEmpAnn); setAu('grat',gratAnn); setAu('retB',retB);
+  ['c','n','o'].forEach(p=>{const el=document.getElementById(p+'-gratV');if(el)el.textContent=pc(gratPct,4);});
+  ['c','n','o'].forEach(p=>{const el=document.getElementById(p+'-pferLbl');if(el)el.textContent=pfopt==='2'?'12% of ₹15k':'12% of Basic';});
+  ['c','n','o'].forEach(p=>{const el=document.getElementById(p+'-pfempLbl');if(el)el.textContent=pfopt==='2'?'12% of ₹15k':'12% of Basic';});
+  ['c','n','o'].forEach(p=>{setAu(p+'-pfEr',pfErAnn);setAu(p+'-pfEmp',pfEmpAnn);setAu(p+'-grat',gratAnn);setAu(p+'-retB',retB);});
 
   const varTarget=+document.getElementById('varP').value||0;
   const premTarget=+document.getElementById('premB').value||0;
@@ -893,7 +1556,7 @@ function calc(){
   const varAct=Math.round(varTarget*varPctVal/100);
   const premAct=Math.round(premTarget*varPctVal/100);
   const totalVar=varAct+premAct;
-  document.getElementById('varPctV').textContent=pc(varPctVal,0);
+  ['c','n','o'].forEach(p=>{const el=document.getElementById(p+'-varPctV');if(el)el.textContent=pc(varPctVal,0);});
 
   const varFreq=document.getElementById('varFreq').value;
   const premFreq=document.getElementById('premFreq').value;
@@ -911,7 +1574,7 @@ function calc(){
   const npsErMo=Math.round(npsErAnn/12);
   const mobileMo=+document.getElementById('mobile').value||0;
   const mobileAnn=mobileMo*12;
-  document.getElementById('npsPctV').textContent=`${npsPct}% = ${fmt(npsErMo)}/mo`;
+  ['c','n','o'].forEach(p=>{const el=document.getElementById(p+'-npsPctV');if(el)el.textContent=`${npsPct}% = ${fmt(npsErMo)}/mo`;});
 
   const rent=(+document.getElementById('rent').value||0)*12;
   const lta=+document.getElementById('lta').value||0;
@@ -928,10 +1591,12 @@ function calc(){
   const shiftMoAmt = +document.getElementById('shiftmo').value||0;
   const shiftAnn   = shiftMoAmt * 12;
   // Update leave display
-  const lDisp = document.getElementById('leaveAmtDisp');
-  const lLbl  = document.getElementById('leaveAmtLbl');
-  if(lDisp){ lDisp.value = leaveAmt; }
-  if(lLbl) { lLbl.textContent = fmt(leaveAmt); }
+  // leave display updated for all tabs below
+  // (leave lbl)
+  ['c','n','o'].forEach(p=>{
+    const ld=document.getElementById(p+'-leaveAmtDisp');if(ld)ld.value=leaveAmt;
+    const ll=document.getElementById(p+'-leaveAmtLbl');if(ll)ll.textContent=fmt(leaveAmt);
+  });
 
   const hraEx=rent>0?Math.min(hra,Math.round(basic*hraRate),Math.max(0,rent-Math.round(basic*.10))):0;
   const pf80C=Math.min(pfEmpAnn,150000);
@@ -944,7 +1609,7 @@ function calc(){
   // CTC summary
   // helper: coloured sub-row for CTC sections
   function csub(lbl,val,c){return `<div class="sbr" style="background:${c==='A'?'#f0fdf4':c==='B'?'#eff6ff':'#fff7ed'}"><span class="la" style="color:${c==='A'?'var(--green)':c==='B'?'var(--blue)':'var(--amber)'};font-weight:400">↳ ${lbl}</span><span class="va" style="color:${c==='A'?'var(--green)':c==='B'?'var(--blue)':'var(--amber)'};font-weight:400">${val}</span></div>`;}
-  document.getElementById('ctcSum').innerHTML=[
+  document.getElementById('ctcSum')&&(document.getElementById('ctcSum').innerHTML=[
     SEC('A — Fixed Pay',fmt(fixedA),'secA'),
     csub('Basic',fmt(basic),'A'),
     csub(`HRA (${(hraRate*100).toFixed(0)}% of Basic)`,fmt(hra),'A'),
@@ -960,7 +1625,7 @@ function calc(){
     shiftAnn>0?R(`Shift Allowance (₹${fmt(shiftMoAmt)}/mo × 12)`,fmt(shiftAnn)):'',
     R('Gross Salary (incl. shift allowance)',fmt(grossSal),'grn'),
     `<div class="sbr" style="font-size:.73rem"><span class="la" style="color:var(--muted)">B = employer cost (not your income). C = taxable when paid.</span></div>`,
-  ].filter(Boolean).join('');
+  ].filter(Boolean).join(''));
 
   const args=[npsErAnn,foodAnn,mobileAnn,hraEx,lta,otherA,pf80C,d80d,hli,npsSelf,othDed];
   const nF=computeTax(totalInc,'new',...args);
@@ -995,14 +1660,14 @@ function calc(){
 
   // Variable summary
   const vTaxO=oF.total-oB.total, vTaxN=nF.total-nB.total;
-  document.getElementById('vsum').innerHTML=totalVar>0?[
+  document.getElementById('c-vsum')&&(document.getElementById('c-vsum').innerHTML=totalVar>0?[
     R('Variable Pay Targets',fmt(varTarget+premTarget)),
     R(`Actual Payout (${pc(varPctVal,0)})`,fmt(totalVar)),
     R('Tax on Variable — Old',fmt(vTaxO),'neg'),
     R('Tax on Variable — New',fmt(vTaxN),'neg'),
     R('Net Variable in Hand — Old',fmt(totalVar-vTaxO),'grn'),
     R('Net Variable in Hand — New',fmt(totalVar-vTaxN),'grn'),
-  ].join(''):'';
+  ].join(''):'');
 
   // In-hand uses BASE tax (salary only) — variables declared above after oB/nB
 
@@ -1121,17 +1786,142 @@ function calc(){
     `<div class="sbr"><span class="la">↳ + Cess @ 4%</span><span class="va co">+ ${fmt(oF.cs)}</span></div>`,
     R('Total Tax',fmt(oF.total),'tot'),
   ].filter(Boolean).join('');
+  // Update single-regime tab displays
+  updateTabDisplays();
 }
 window.addEventListener('load',()=>{setVF();});
+// updateTabDisplays is called directly at end of main calc — see below
+
+function updateTabDisplays(){
+  // Read computed values from compare-tab DOM (already updated by orig calc)
+  // and mirror to single-regime tabs
+
+  // Read values we need
+  const rotEl=document.getElementById('rot');
+  const rntEl=document.getElementById('rnt');
+  if(!rotEl||!rntEl) return;
+
+  const oTaxTxt=rotEl.textContent;
+  const nTaxTxt=rntEl.textContent;
+  const rothEl=document.getElementById('roth');
+  const rnthEl=document.getElementById('rnth');
+  const roeEl=document.getElementById('roe');
+  const rneEl=document.getElementById('rne');
+
+  // New regime single tab
+  const nTax=document.getElementById('n-tax'); if(nTax) nTax.textContent=nTaxTxt;
+  const nTh=document.getElementById('n-th'); if(nTh&&rnthEl) nTh.textContent=rnthEl.textContent;
+  const nEff=document.getElementById('n-eff'); if(nEff&&rneEl) nEff.textContent=rneEl.textContent;
+  // Highlight if new is winner
+  const nBox=document.getElementById('n-resultbox');
+  if(nBox){
+    const newIsWin=document.getElementById('newbox')&&document.getElementById('newbox').classList.contains('win');
+    nBox.classList.toggle('win',newIsWin);
+  }
+
+  // Old regime single tab
+  const oTax=document.getElementById('o-tax'); if(oTax) oTax.textContent=oTaxTxt;
+  const oTh=document.getElementById('o-th'); if(oTh&&rothEl) oTh.textContent=rothEl.textContent;
+  const oEff=document.getElementById('o-eff'); if(oEff&&roeEl) oEff.textContent=roeEl.textContent;
+  const oBox=document.getElementById('o-resultbox');
+  if(oBox){
+    const oldIsWin=document.getElementById('oldbox')&&document.getElementById('oldbox').classList.contains('win');
+    oBox.classList.toggle('win',oldIsWin);
+  }
+
+  // Mirror auto-computed input values from compare tab to n/o tabs
+  const autoFields=['hra','conv','spl','pfEr','pfEmp','grat','retB','leaveAmtDisp'];
+  autoFields.forEach(f=>{
+    const src=document.getElementById('c-'+f);
+    if(!src) return;
+    ['n','o'].forEach(p=>{const dst=document.getElementById(p+'-'+f);if(dst)dst.value=src.value;});
+  });
+  const lblFields=['hraLbl','pferLbl','pfempLbl','gratV','npsPctV','varPctV','leaveAmtLbl'];
+  lblFields.forEach(f=>{
+    const src=document.getElementById('c-'+f);
+    if(!src) return;
+    ['n','o'].forEach(p=>{const dst=document.getElementById(p+'-'+f);if(dst)dst.textContent=src.textContent;});
+  });
+
+  // Mirror CTC summary
+  const ctcHtml=document.getElementById('ctcSum')&&document.getElementById('ctcSum').innerHTML;
+  if(ctcHtml){
+    ['n-ctcSum','o-ctcSum'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML=ctcHtml;});
+  }
+
+  // Mirror in-hand blocks
+  const iho=document.getElementById('inhand-old'); const ihon=document.getElementById('n-inhand');
+  const ihn=document.getElementById('inhand-new'); const ihoo=document.getElementById('o-inhand');
+  // new regime tab gets new regime in-hand
+  if(ihn&&ihon) ihon.innerHTML=ihn.innerHTML;
+  // old regime tab gets old regime in-hand
+  if(iho&&ihoo) ihoo.innerHTML=iho.innerHTML;
+
+  // Mirror month tables (simplified — single regime columns)
+  const mrows_new=[...document.querySelectorAll('#mtbody tr')];
+  const nMtb=document.getElementById('n-mtbody');
+  const oMtb=document.getElementById('o-mtbody');
+  if(nMtb){
+    nMtb.innerHTML=mrows_new.map(tr=>{
+      const tds=[...tr.querySelectorAll('td')];
+      if(tds.length<7) return '';
+      const cls=tr.className?` class="${tr.className}"`:'';
+      return `<tr${cls}>${tds[0].outerHTML}${tds[1].outerHTML}${tds[2].outerHTML}${tds[5].outerHTML}${tds[6].outerHTML}</tr>`;
+    }).join('');
+  }
+  if(oMtb){
+    oMtb.innerHTML=mrows_new.map(tr=>{
+      const tds=[...tr.querySelectorAll('td')];
+      if(tds.length<7) return '';
+      const cls=tr.className?` class="${tr.className}"`:'';
+      return `<tr${cls}>${tds[0].outerHTML}${tds[1].outerHTML}${tds[2].outerHTML}${tds[3].outerHTML}${tds[4].outerHTML}</tr>`;
+    }).join('');
+  }
+
+  // Footer totals
+  const copyFoot=(srcId,dstId)=>{const s=document.getElementById(srcId),d=document.getElementById(dstId);if(s&&d)d.textContent=s.textContent;};
+  copyFoot('ftb','n-ftb'); copyFoot('ftv','n-ftv'); copyFoot('ftnt','n-ftot'); copyFoot('ftnn','n-fton');
+  copyFoot('ftb','o-ftb'); copyFoot('ftv','o-ftv'); copyFoot('ftot','o-ftot'); copyFoot('fton','o-fton');
+
+  // Mirror tax computation breakdowns
+  const nbuildHtml=document.getElementById('nbuild')&&document.getElementById('nbuild').innerHTML;
+  const nslabsHtml=document.getElementById('nslabs')&&document.getElementById('nslabs').innerHTML;
+  const nsumHtml=document.getElementById('nsum')&&document.getElementById('nsum').innerHTML;
+  const obuildHtml=document.getElementById('obuild')&&document.getElementById('obuild').innerHTML;
+  const oslabsHtml=document.getElementById('oslabs')&&document.getElementById('oslabs').innerHTML;
+  const osumHtml=document.getElementById('osum')&&document.getElementById('osum').innerHTML;
+  if(nbuildHtml){const el=document.getElementById('n-nbuild');if(el)el.innerHTML=nbuildHtml;}
+  if(nslabsHtml){const el=document.getElementById('n-nslabs');if(el)el.innerHTML=nslabsHtml;}
+  if(nsumHtml){const el=document.getElementById('n-nsum');if(el)el.innerHTML=nsumHtml;}
+  if(obuildHtml){const el=document.getElementById('o-obuild');if(el)el.innerHTML=obuildHtml;}
+  if(oslabsHtml){const el=document.getElementById('o-oslabs');if(el)el.innerHTML=oslabsHtml;}
+  if(osumHtml){const el=document.getElementById('o-osum');if(el)el.innerHTML=osumHtml;}
+
+  // Mirror variable pay summary to compare tab
+  const vsumHtml=document.getElementById('inhand-var')&&document.getElementById('inhand-var').innerHTML;
+  const cvsumEl=document.getElementById('c-vsum');
+  // Already handled by main calc for c-vsum — skip
+  const nIhv=document.getElementById('n-inhand-var'); if(nIhv&&vsumHtml) nIhv.innerHTML=vsumHtml;
+  const oIhv=document.getElementById('o-inhand-var'); if(oIhv&&vsumHtml) oIhv.innerHTML=vsumHtml;
+}
+
 
 // ── INIT ──────────────────────────────────────────────────────────────────────
 function resetAll(){
-  // Clear only number text inputs to zero — dropdowns and sliders untouched
-  // Basic gets minimum value; Fixed A auto-computes from it; rest go to 0
+  // Reset master hidden fields
   document.getElementById('basic').value = 150000;
   const zeroIds = ['fixedAT','varP','premB','mobile','leavedays','shiftmo',
                    'rent','lta','otherA','d80d','hli','npsSelf','othDed','othInc'];
   zeroIds.forEach(id => { const el=document.getElementById(id); if(el) el.value=0; });
+  // Reset all tab-prefixed visible inputs too
+  const allPfx=['n','o','c'];
+  allPfx.forEach(p=>{
+    const bEl=document.getElementById(p+'-basic'); if(bEl) bEl.value=150000;
+    const fEl=document.getElementById(p+'-fixedAT'); if(fEl) fEl.value=0;
+    zeroIds.forEach(id=>{const el=document.getElementById(p+'-'+id);if(el)el.value=0;});
+  });
+  // Reset food buttons
+  syncFoodButtons(0);
   calc();
 }
 
