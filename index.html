@@ -227,6 +227,7 @@ tbody td:first-child{text-align:left;color:var(--muted)}
 <header>
   <div class="logo">Fin<span>Calc</span> <span style="font-size:.65rem;font-weight:400;color:#64748b;margin-left:5px">India</span></div>
   <div class="tagline">Loans &amp; Income Tax</div>
+  <button onclick="resetAll()" title="Clear all values to start fresh" style="font-family:var(--fb);font-size:.75rem;font-weight:600;padding:6px 14px;border-radius:6px;border:1.5px solid rgba(255,255,255,.3);background:transparent;color:#e2e8f0;cursor:pointer;white-space:nowrap;transition:all .15s" onmouseover="this.style.background='rgba(255,255,255,.15)'" onmouseout="this.style.background='transparent'">🔄 Reset</button>
 </header>
 
 <div class="topnav">
@@ -318,7 +319,10 @@ tbody td:first-child{text-align:left;color:var(--muted)}
      INCOME TAX PAGE
 ════════════════════════════════════════════════════════ -->
 <div class="page active" id="page-tax">
-<h1>Income Tax Calculator <span style="font-size:.9rem;font-weight:400;color:var(--muted)">India — FY 2025-26</span></h1>
+<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;margin-bottom:.2rem">
+  <h1 style="margin-bottom:0">Income Tax Calculator <span style="font-size:.9rem;font-weight:400;color:var(--muted)">India — FY 2025-26</span></h1>
+  <button onclick="resetAll()" title="Clear all text fields to start fresh" style="font-family:var(--fb);font-size:.78rem;font-weight:600;padding:7px 16px;border-radius:8px;border:1.5px solid var(--coral);background:#fff;color:var(--coral);cursor:pointer;white-space:nowrap;flex-shrink:0;transition:all .15s;margin-top:4px" onmouseover="this.style.background='var(--coral)';this.style.color='#fff'" onmouseout="this.style.background='#fff';this.style.color='var(--coral)'">🔄 Reset</button>
+</div>
 <div class="sub">Basic salary drives all CTC components · Correct slabs · 87A rebate · Variable pay · Month-wise take-home</div>
 <div class="grid">
 
@@ -450,7 +454,7 @@ tbody td:first-child{text-align:left;color:var(--muted)}
       <div class="fl"><span>Variable Frequency</span></div>
       <select id="varFreq" onchange="setVF()">
         <option value="annual">Annual</option>
-        <option value="biannual">Bi-Annual</option>
+        <option value="biannual" selected>Bi-Annual</option>
         <option value="quarterly">Quarterly</option>
       </select>
     </div>
@@ -481,9 +485,9 @@ tbody td:first-child{text-align:left;color:var(--muted)}
     <select id="leavemo" onchange="calc()">
       <option value="Apr">April</option><option value="May">May</option>
       <option value="Jun">June</option><option value="Jul">July</option>
-      <option value="Aug">August</option><option value="Sep" selected>September</option>
+      <option value="Aug">August</option><option value="Sep">September</option>
       <option value="Oct">October</option><option value="Nov">November</option>
-      <option value="Dec">December</option><option value="Jan">January</option>
+      <option value="Dec">December</option><option value="Jan" selected>January</option>
       <option value="Feb">February</option><option value="Mar">March</option>
     </select>
   </div>
@@ -610,6 +614,11 @@ tbody td:first-child{text-align:left;color:var(--muted)}
 </div>
 
 </div><!-- end right -->
+
+
+<div style="text-align:center;margin:0 0 1.5rem">
+  <button onclick="resetAll()" style="font-family:var(--fb);font-size:.82rem;font-weight:600;padding:10px 28px;border-radius:8px;border:1.5px solid var(--coral);background:#fff;color:var(--coral);cursor:pointer;transition:all .15s" onmouseover="this.style.background='var(--coral)';this.style.color='#fff'" onmouseout="this.style.background='#fff';this.style.color='var(--coral)'">🔄 Reset All to Default</button>
+</div>
 </div><!-- end grid -->
 </div>
 
@@ -754,6 +763,7 @@ function cL(){
 // ── INCOME TAX ────────────────────────────────────────────────────────────────
 const MONTHS=['Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar'];
 const VDEF={annual:['Mar'],biannual:['Sep','Mar'],quarterly:['Jun','Sep','Dec','Mar']};
+const PDEF={annual:['May'],biannual:['May','Nov'],quarterly:['May','Aug','Nov','Feb']};
 const OS=[[250000,0],[500000,.05],[1000000,.2],[Infinity,.3]];
 const NS=[[400000,0],[800000,.05],[1200000,.10],[1600000,.15],[2000000,.20],[2400000,.25],[Infinity,.30]];
 
@@ -802,7 +812,7 @@ function getMonths(pre,freq){
 function setVF(){
   const vf=document.getElementById('varFreq').value;
   const pf=document.getElementById('premFreq').value;
-  const vd=VDEF[vf],pd=VDEF[pf];
+  const vd=VDEF[vf],pd=PDEF[pf];
   const vAmt=+document.getElementById('varP').value||0;
   const pAmt=+document.getElementById('premB').value||0;
   function sels(pre,defs){
@@ -1110,6 +1120,16 @@ function calc(){
 window.addEventListener('load',()=>{setVF();});
 
 // ── INIT ──────────────────────────────────────────────────────────────────────
+function resetAll(){
+  // Clear only number text inputs to zero — dropdowns and sliders untouched
+  // Basic gets minimum value; Fixed A auto-computes from it; rest go to 0
+  document.getElementById('basic').value = 150000;
+  const zeroIds = ['fixedAT','varP','premB','mobile','leavedays','shiftmo',
+                   'rent','lta','otherA','d80d','hli','npsSelf','othDed','othInc'];
+  zeroIds.forEach(id => { const el=document.getElementById(id); if(el) el.value=0; });
+  calc();
+}
+
 window.addEventListener('load', () => {
   // Loans: init defaults then calculate
   setLT('personal', document.querySelector('#page-loans .stab.active'));
