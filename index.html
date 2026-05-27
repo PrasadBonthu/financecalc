@@ -230,6 +230,29 @@ tbody td:first-child{text-align:left;color:var(--muted)}
 .slw input[type=range]{flex:1;-webkit-appearance:none;height:4px;background:var(--border);border-radius:2px;border:none;padding:0;cursor:pointer;min-width:0}
 .slw input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--blue);border:2px solid #fff;box-shadow:0 0 0 2px var(--blue)}
 .sv{font-size:.84rem;font-weight:600;color:var(--blue);min-width:70px;text-align:right;white-space:nowrap}
+/* ── NEW MODULE STYLES ───────────────────────────────────────────────────── */
+.metrics4{display:grid;grid-template-columns:repeat(4,1fr);gap:.75rem;margin-bottom:1rem}
+@media(max-width:760px){.metrics4{grid-template-columns:1fr 1fr}}
+.result-hero{background:linear-gradient(135deg,var(--navy),var(--navy2));border-radius:var(--radius);padding:1.5rem;text-align:center;margin-bottom:1rem;color:#fff}
+.result-hero .rh-label{font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:#94a3b8;margin-bottom:.4rem}
+.result-hero .rh-val{font-family:var(--fh);font-size:2rem;font-weight:700;color:#fff}
+.result-hero .rh-sub{font-size:.8rem;color:#94a3b8;margin-top:.3rem}
+.progress-bar-wrap{background:var(--border);border-radius:4px;height:8px;margin:.4rem 0}
+.progress-bar{height:8px;border-radius:4px;transition:width .4s}
+.scenario-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:.75rem;margin-bottom:1rem}
+.scenario-card{background:var(--bg);border-radius:10px;padding:.85rem;border:1.5px solid var(--border);cursor:pointer;transition:all .15s}
+.scenario-card:hover,.scenario-card.sel{border-color:var(--blue);background:var(--blue-lt)}
+.scenario-card .sc-label{font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.3rem}
+.scenario-card .sc-val{font-family:var(--fh);font-size:1rem;font-weight:700;color:var(--navy)}
+.budget-bar-row{display:flex;align-items:center;gap:8px;margin-bottom:.5rem}
+.budget-bar-label{font-size:.78rem;color:var(--muted);width:110px;flex-shrink:0}
+.budget-bar-track{flex:1;background:var(--border);border-radius:4px;height:10px}
+.budget-bar-fill{height:10px;border-radius:4px;transition:width .3s}
+.budget-bar-val{font-size:.78rem;font-weight:600;color:var(--navy);min-width:65px;text-align:right}
+.tag-pill{display:inline-block;font-size:.65rem;font-weight:600;padding:2px 7px;border-radius:10px;text-transform:uppercase;letter-spacing:.04em;margin-left:5px;vertical-align:middle}
+.tag-pill.green{background:#d1fae5;color:#065f46}
+.tag-pill.blue{background:var(--blue-lt);color:#1e40af}
+.tag-pill.amber{background:#fef3c7;color:#92400e}
 /* month table */
 .mt{width:100%;border-collapse:collapse;font-size:.76rem}
 .mt thead tr{background:var(--navy)}
@@ -255,6 +278,13 @@ tbody td:first-child{text-align:left;color:var(--muted)}
 <div class="topnav">
   <button class="tnav-btn" onclick="showPage('loans',this)">🏦 Loans</button>
   <button class="tnav-btn active" onclick="showPage('tax',this)">📋 Income Tax</button>
+  <button class="tnav-btn" onclick="showPage('savings',this)">🏛️ Savings</button>
+  <button class="tnav-btn" onclick="showPage('sip',this)">📈 SIP / MF</button>
+  <button class="tnav-btn" onclick="showPage('retire',this)">🌅 Retirement</button>
+  <button class="tnav-btn" onclick="showPage('realty',this)">🏠 Real Estate</button>
+  <button class="tnav-btn" onclick="showPage('insurance',this)">🛡️ Insurance</button>
+  <button class="tnav-btn" onclick="showPage('budget',this)">💰 Budget</button>
+  <button class="tnav-btn" onclick="showPage('inflation',this)">📊 Inflation</button>
 </div>
 
 <!-- ── TAX SUB-TABS (shown only when tax page active) ── -->
@@ -1906,6 +1936,446 @@ function updateTabDisplays(){
 }
 
 
+// ── NEW MODULE NAVIGATION ─────────────────────────────────────────────────────
+function setSavTab(t,btn){document.querySelectorAll('#page-savings .stab').forEach(b=>b.classList.remove('active'));btn.classList.add('active');_savTab=t;
+  const isFd=t==='fd',isRd=t==='rd',isPpf=t==='ppf',isNsc=t==='nsc',isSsa=t==='ssa';
+  document.getElementById('sav-principal-wrap').style.display=(isRd)?'none':'block';
+  document.getElementById('sav-monthly-wrap').style.display=(isRd)?'block':'none';
+  document.getElementById('sav-comp-wrap').style.display=(isFd)?'block':'none';
+  const r=document.getElementById('savRate'),rn=document.getElementById('savRateN');
+  if(isPpf){r.value=7.1;rn.value=7.1;document.getElementById('sav-rate-market').textContent='Govt: 7.1%';}
+  else if(isSsa){r.value=8.2;rn.value=8.2;document.getElementById('sav-rate-market').textContent='Govt: 8.2%';}
+  else if(isNsc){r.value=7.7;rn.value=7.7;document.getElementById('sav-rate-market').textContent='Govt: 7.7%';}
+  else if(isRd){r.value=6.5;rn.value=6.5;document.getElementById('sav-rate-market').textContent='Bank: ~6–7%';}
+  else{r.value=7.1;rn.value=7.1;document.getElementById('sav-rate-market').textContent='Bank: ~6.5–7.5%';}
+  const tenEl=document.getElementById('savTen'),tenNEl=document.getElementById('savTenN');
+  if(isPpf){tenEl.min=15;tenEl.max=20;tenEl.value=15;tenNEl.value=15;}
+  else if(isSsa){tenEl.min=15;tenEl.max=21;tenEl.value=15;tenNEl.value=15;}
+  else if(isNsc){tenEl.min=5;tenEl.max=5;tenEl.value=5;tenNEl.value=5;}
+  else{tenEl.min=1;tenEl.max=10;tenEl.value=5;tenNEl.value=5;}
+  const infoMap={fd:'💡 FD interest is fully taxable. Rates vary 6.5–7.5% p.a. Senior citizens get +0.5%. TDS applies if annual interest > ₹40,000.',rd:'💡 RD is a disciplined monthly savings product. Interest is compounded quarterly and fully taxable.',ppf:'🛡️ PPF: 15-year lock-in, extendable in 5-yr blocks. EEE status — investment, interest, and maturity all tax-free. Annual limit: ₹1.5L.',nsc:'📜 NSC: 5-year tenure, 7.7% p.a. compounded annually. Interest accrued (except final year) is treated as reinvested and qualifies for 80C deduction.',ssa:'👧 Sukanya Samriddhi: Only for girl child below 10 years. EEE status. Deposit for 15 years, matures at 21 years. Annual limit: ₹1.5L.'};
+  document.getElementById('sav-info').textContent=infoMap[t];
+  cSav();
+}
+let _savTab='fd';
+function syncSavAmt(src){const r=document.getElementById('savAmt'),n=document.getElementById('savAmtN');if(src==='slider')n.value=r.value;else{r.value=n.value||1000;}}
+function syncSavMo(src){const r=document.getElementById('savMo'),n=document.getElementById('savMoN');if(src==='slider')n.value=r.value;else r.value=n.value||500;}
+function syncSavRate(src){const r=document.getElementById('savRate'),n=document.getElementById('savRateN');if(src==='slider')n.value=parseFloat(r.value).toFixed(2);else r.value=n.value||4;}
+function syncSavTen(src){const r=document.getElementById('savTen'),n=document.getElementById('savTenN');if(src==='slider')n.value=r.value;else{const v=Math.max(+r.min,Math.min(+r.max,+n.value||1));r.value=v;n.value=v;}}
+
+function cSav(){
+  const rate=parseFloat(document.getElementById('savRateN').value||document.getElementById('savRate').value)/100;
+  const years=parseInt(document.getElementById('savTenN').value||document.getElementById('savTen').value);
+  const t=_savTab;
+  let maturity=0,invested=0,interest=0,tableRows='',chartInv=[],chartMat=[];
+  if(t==='rd'){
+    const mo=+document.getElementById('savMoN').value||+document.getElementById('savMo').value;
+    const r=rate/4;const n=years*12;
+    maturity=mo*(Math.pow(1+r,n/3)-1)/(1-Math.pow(1+r,-1/3));
+    invested=mo*n;interest=maturity-invested;
+    let bal=0;for(let y=1;y<=years;y++){const ob=bal;const contrib=mo*12;bal=bal*(1+rate)+contrib;chartInv.push(Math.round(mo*12*y));chartMat.push(Math.round(bal));tableRows+=`<tr><td>Year ${y}</td><td>${fmt(ob)}</td><td>${fmt(bal-ob-contrib)}</td><td>${fmt(bal)}</td></tr>`;}
+  } else if(t==='ppf'){
+    invested=0;let bal=0;const ann=+document.getElementById('savAmtN').value||+document.getElementById('savAmt').value;
+    for(let y=1;y<=years;y++){const ob=bal;bal=(bal+ann)*(1+rate);invested+=ann;chartInv.push(Math.round(invested));chartMat.push(Math.round(bal));tableRows+=`<tr><td>Year ${y}</td><td>${fmt(ob)}</td><td>${fmt(bal-ob-ann)}</td><td>${fmt(bal)}</td></tr>`;}
+    maturity=bal;interest=maturity-invested;
+  } else if(t==='ssa'){
+    const ann=+document.getElementById('savAmtN').value||+document.getElementById('savAmt').value;
+    let bal=0;invested=0;
+    for(let y=1;y<=21;y++){const ob=bal;if(y<=15){bal=(bal+ann)*(1+rate);invested+=ann;}else{bal=bal*(1+rate);}chartInv.push(Math.round(invested));chartMat.push(Math.round(bal));tableRows+=`<tr><td>Year ${y}${y>15?' (growth)':''}</td><td>${fmt(ob)}</td><td>${fmt(bal-ob-(y<=15?ann:0))}</td><td>${fmt(bal)}</td></tr>`;}
+    maturity=bal;interest=maturity-invested;
+  } else {
+    const P=+document.getElementById('savAmtN').value||+document.getElementById('savAmt').value;
+    const n=parseInt(document.getElementById('savComp').value)||4;
+    invested=P;maturity=P*Math.pow(1+rate/n,n*years);interest=maturity-invested;
+    let bal=P;for(let y=1;y<=years;y++){const ob=bal;bal=P*Math.pow(1+rate/n,n*y);chartInv.push(Math.round(P));chartMat.push(Math.round(bal));tableRows+=`<tr><td>Year ${y}</td><td>${fmt(ob)}</td><td>${fmt(bal-ob)}</td><td>${fmt(bal)}</td></tr>`;}
+  }
+  document.getElementById('sav-maturity').textContent=fmt(maturity);
+  document.getElementById('sav-invested').textContent=fmt(invested);
+  document.getElementById('sav-interest').textContent=fmt(interest);
+  document.getElementById('sav-hero-sub').textContent='Interest earned: '+fmt(interest);
+  const effYield=invested>0?((maturity/invested-1)/years*100):0;
+  document.getElementById('sav-yield').textContent=pct(effYield);
+  const taxNote={fd:'Taxable (TDS)',rd:'Fully taxable',ppf:'Tax-free (EEE)',nsc:'Partially exempt',ssa:'Tax-free (EEE)'};
+  document.getElementById('sav-tax-note').textContent=taxNote[t]||'';
+  document.getElementById('sav-table').innerHTML=tableRows;
+  const labels=Array.from({length:chartInv.length},(_,i)=>'Y'+(i+1));
+  mkC('savChart','line',{labels,datasets:[{label:'Invested',data:chartInv,borderColor:'#1a56db',backgroundColor:'rgba(26,86,219,.1)',fill:true,tension:.3,pointRadius:0},{label:'Maturity Value',data:chartMat,borderColor:'#059669',backgroundColor:'rgba(5,150,105,.1)',fill:true,tension:.3,pointRadius:0}]},{scales:{x:{grid:{display:false},ticks:{font:{size:8}}},y:{ticks:{callback:v=>fS(v),font:{size:9}}}}});
+}
+
+// ── SIP ─────────────────────────────────────────────────────────────────────
+let _sipTab='sip';
+function setSipTab(t,btn){document.querySelectorAll('#page-sip .stab').forEach(b=>b.classList.remove('active'));btn.classList.add('active');_sipTab=t;
+  document.getElementById('sip-monthly-wrap').style.display=(t==='sip'||t==='elss')?'block':'none';
+  document.getElementById('sip-lump-wrap').style.display=(t==='lump')?'block':'none';
+  document.getElementById('sip-goal-wrap').style.display=(t==='goal')?'block':'none';
+  document.getElementById('sip-step-wrap').style.display=(t==='sip'||t==='elss')?'block':'none';
+  document.getElementById('sip-elss-info').style.display=(t==='elss')?'block':'none';
+  if(t==='elss'){document.getElementById('sipRate').value=12;document.getElementById('sip-input-title').textContent='ELSS Details';}
+  else if(t==='lump'){document.getElementById('sip-input-title').textContent='Lump Sum Details';}
+  else if(t==='goal'){document.getElementById('sip-input-title').textContent='Goal Details';}
+  else{document.getElementById('sip-input-title').textContent='SIP Details';}
+  cSip();
+}
+function syncSipAmt(src){const r=document.getElementById('sipAmt'),n=document.getElementById('sipAmtN');if(src==='slider')n.value=r.value;else r.value=n.value||500;}
+function syncSipLump(src){const r=document.getElementById('sipLump'),n=document.getElementById('sipLumpN');if(src==='slider')n.value=r.value;else r.value=n.value||10000;}
+function syncSipGoal(src){const r=document.getElementById('sipGoal'),n=document.getElementById('sipGoalN');if(src==='slider')n.value=r.value;else r.value=n.value||100000;}
+
+function cSip(){
+  const rate=parseFloat(document.getElementById('sipRate').value)/100;
+  const years=parseInt(document.getElementById('sipTen').value);
+  const step=parseFloat(document.getElementById('sipStep').value)/100;
+  const t=_sipTab;
+  let corpus=0,invested=0,chartInv=[],chartCorpus=[];
+  if(t==='lump'){
+    const P=+document.getElementById('sipLumpN').value||+document.getElementById('sipLump').value;
+    invested=P;corpus=P*Math.pow(1+rate,years);
+    for(let y=1;y<=years;y++){chartInv.push(Math.round(P));chartCorpus.push(Math.round(P*Math.pow(1+rate,y)));}
+    document.getElementById('sip-m1l').textContent='Amount Invested';
+    document.getElementById('sip-m4l').textContent='Wealth Multiplier';
+    document.getElementById('sip-hero-label').textContent='Lump Sum Value at Maturity';
+  } else if(t==='goal'){
+    const goal=+document.getElementById('sipGoalN').value||+document.getElementById('sipGoal').value;
+    const r=rate/12;const n=years*12;
+    const sipNeeded=r?goal*r/(Math.pow(1+r,n)-1):goal/n;
+    invested=sipNeeded*n;corpus=goal;
+    for(let y=1;y<=years;y++){const mn=y*12;const v=r?sipNeeded*(Math.pow(1+r,mn)-1)/r*Math.pow(1+r,0):sipNeeded*mn;chartInv.push(Math.round(sipNeeded*mn));chartCorpus.push(Math.round(v));}
+    document.getElementById('sip-m1l').textContent='Monthly SIP Needed';document.getElementById('sip-invested').textContent=fmt(sipNeeded)+'/mo';
+    document.getElementById('sip-m4l').textContent='Total Invested';document.getElementById('sip-mult').textContent=fmt(invested);
+    document.getElementById('sip-hero-label').textContent='Target Corpus';
+    document.getElementById('sip-returns').textContent=fmt(goal-invested);
+    document.getElementById('sip-cagr').textContent=pct(rate*100);
+    document.getElementById('sip-corpus').textContent=fmt(goal);
+    mkC('sipChart','line',{labels:Array.from({length:years},(_,i)=>'Y'+(i+1)),datasets:[{label:'Invested',data:chartInv,borderColor:'#1a56db',backgroundColor:'rgba(26,86,219,.1)',fill:true,tension:.3,pointRadius:0},{label:'Corpus',data:chartCorpus,borderColor:'#059669',backgroundColor:'rgba(5,150,105,.1)',fill:true,tension:.3,pointRadius:0}]},{scales:{x:{grid:{display:false},ticks:{font:{size:8}}},y:{ticks:{callback:v=>fS(v),font:{size:9}}}}});
+    return;
+  } else {
+    // SIP or ELSS with step-up
+    const mo=+document.getElementById('sipAmtN').value||+document.getElementById('sipAmt').value;
+    const r=rate/12;let bal=0,moSip=mo,totalInv=0;
+    for(let y=1;y<=years;y++){for(let m=0;m<12;m++){bal=bal*(1+r)+moSip;totalInv+=moSip;}chartInv.push(Math.round(totalInv));chartCorpus.push(Math.round(bal));if(step>0)moSip=moSip*(1+step);}
+    invested=totalInv;corpus=bal;
+    document.getElementById('sip-m1l').textContent='Total Invested';
+    document.getElementById('sip-m4l').textContent='Wealth Multiplier';
+    document.getElementById('sip-hero-label').textContent='Total Corpus at Maturity';
+  }
+  const returns=corpus-invested;
+  const mult=invested>0?corpus/invested:0;
+  const cagr=invested>0?(Math.pow(corpus/invested,1/years)-1)*100:0;
+  document.getElementById('sip-corpus').textContent=fmt(corpus);
+  document.getElementById('sip-hero-sub').textContent='Returns earned: '+fmt(returns);
+  document.getElementById('sip-invested').textContent=fmt(invested);
+  document.getElementById('sip-returns').textContent=fmt(returns);
+  document.getElementById('sip-cagr').textContent=pct(cagr);
+  document.getElementById('sip-mult').textContent=mult.toFixed(1)+'x';
+  mkC('sipChart','line',{labels:Array.from({length:years},(_,i)=>'Y'+(i+1)),datasets:[{label:'Invested',data:chartInv,borderColor:'#1a56db',backgroundColor:'rgba(26,86,219,.1)',fill:true,tension:.3,pointRadius:0},{label:'Corpus',data:chartCorpus,borderColor:'#059669',backgroundColor:'rgba(5,150,105,.1)',fill:true,tension:.3,pointRadius:0}]},{scales:{x:{grid:{display:false},ticks:{font:{size:8}}},y:{ticks:{callback:v=>fS(v),font:{size:9}}}}});
+  if(t==='elss'){
+    const mo=+document.getElementById('sipAmtN').value||+document.getElementById('sipAmt').value;
+    const annSip=mo*12;const ded80c=Math.min(150000,annSip);
+    document.getElementById('sip-elss-rows').innerHTML=R('Annual SIP',fmt(annSip))+R('80C Deduction',fmt(ded80c),'grn')+R('LTCG Tax (10% above ₹1L gains/yr)','@10% on gains','neg')+R('Lock-in Period','3 years');
+  }
+}
+
+// ── RETIREMENT ───────────────────────────────────────────────────────────────
+let _retTab='corpus';
+function setRetTab(t,btn){document.querySelectorAll('#page-retire .stab').forEach(b=>b.classList.remove('active'));btn.classList.add('active');_retTab=t;
+  document.getElementById('ret-nps-fields').style.display=(t==='nps')?'block':'none';
+  document.getElementById('ret-nps-summary').style.display=(t==='nps')?'block':'none';
+  document.getElementById('ret-retire-age-wrap').style.display=(t==='early')?'none':'block';
+  document.getElementById('ret-growrate-wrap').style.display=(t==='nps')?'none':'block';
+  if(t==='corpus'){document.getElementById('ret-input-title').textContent='Retirement Inputs';}
+  else if(t==='nps'){document.getElementById('ret-input-title').textContent='NPS Inputs';}
+  else{document.getElementById('ret-input-title').textContent='FIRE / Early Retirement Inputs';}
+  cRet();
+}
+function syncRetExp(src){const r=document.getElementById('retExp'),n=document.getElementById('retExpN');if(src==='slider')n.value=r.value;else r.value=n.value||10000;}
+function syncRetSaved(src){const r=document.getElementById('retSaved'),n=document.getElementById('retSavedN');if(src==='slider')n.value=r.value;else r.value=n.value||0;}
+function syncNpsContr(src){const r=document.getElementById('npsContr'),n=document.getElementById('npsContrN');if(src==='slider')n.value=r.value;else r.value=n.value||500;}
+
+function cRet(){
+  const curAge=+document.getElementById('retAge').value;
+  const lifeExp=+document.getElementById('retLife').value;
+  const moExp=+document.getElementById('retExpN').value||+document.getElementById('retExp').value;
+  const inf=parseFloat(document.getElementById('retInf').value)/100;
+  const postRet=parseFloat(document.getElementById('retPostRet').value)/100;
+  const saved=+document.getElementById('retSavedN').value||+document.getElementById('retSaved').value;
+  const grow=parseFloat(document.getElementById('retGrow').value)/100;
+  const t=_retTab;
+  let retAge=t==='early'?+document.getElementById('retAge').value+15:+document.getElementById('retRetAge').value;
+  if(t==='early')retAge=Math.min(curAge+15,55);
+  const yrsToRet=Math.max(0,retAge-curAge);
+  const retYrs=lifeExp-retAge;
+  const moExpAtRet=moExp*Math.pow(1+inf,yrsToRet);
+  const annExpAtRet=moExpAtRet*12;
+  // Corpus needed (present value of annuity)
+  const realRate=(postRet-inf)/(1+inf);
+  const corpus=realRate>0?annExpAtRet*(1-Math.pow(1+realRate,-retYrs))/realRate:annExpAtRet*retYrs;
+  // Current savings future value
+  const savedFV=saved*Math.pow(1+grow,yrsToRet);
+  // SIP needed to bridge gap
+  const gap=Math.max(0,corpus-savedFV);
+  const r=grow/12;const n=yrsToRet*12;
+  const sipNeeded=n>0?(r>0?gap*r/(Math.pow(1+r,n)-1):gap/n):0;
+  document.getElementById('ret-corpus').textContent=fS(corpus);
+  document.getElementById('ret-hero-sub').textContent='at age '+retAge+', in today\'s ₹: '+fS(corpus/Math.pow(1+inf,yrsToRet));
+  document.getElementById('ret-yrs').textContent=yrsToRet+' yrs';
+  document.getElementById('ret-mo-need').textContent=fmt(moExpAtRet);
+  document.getElementById('ret-sip-need').textContent=fmt(sipNeeded)+'/mo';
+  const gapEl=document.getElementById('ret-gap');
+  if(savedFV>=corpus){gapEl.textContent=fS(savedFV-corpus)+' surplus';gapEl.className='mval green';}
+  else{gapEl.textContent=fS(gap)+' shortfall';gapEl.className='mval coral';}
+  // Chart
+  const labels=[],corpusData=[],savData=[];
+  for(let y=0;y<=yrsToRet;y++){const a=curAge+y;labels.push(a);savData.push(Math.round(saved*Math.pow(1+grow,y)));corpusData.push(Math.round(corpus/(Math.pow(1+inf,yrsToRet-y))));}
+  mkC('retChart','line',{labels,datasets:[{label:'Projected Savings',data:savData,borderColor:'#1a56db',backgroundColor:'rgba(26,86,219,.1)',fill:true,tension:.3,pointRadius:0},{label:'Corpus Target',data:corpusData,borderColor:'#059669',backgroundColor:'rgba(5,150,105,.1)',fill:true,tension:.3,pointRadius:0}]},{scales:{x:{grid:{display:false},ticks:{font:{size:8}}},y:{ticks:{callback:v=>fS(v),font:{size:9}}}}});
+  if(t==='nps'){
+    const npsContr=+document.getElementById('npsContrN').value||+document.getElementById('npsContr').value;
+    const eq=+document.getElementById('npsEq').value/100;
+    const annPct=+document.getElementById('npsAnn').value/100;
+    const npsRate=(eq*0.12+(1-eq)*0.07);
+    const r2=npsRate/12;const n2=yrsToRet*12;
+    const npsCorpus=r2>0?npsContr*(Math.pow(1+r2,n2)-1)/r2*(1+r2):npsContr*n2;
+    const lumpsum=npsCorpus*(1-annPct);const annuityCorpus=npsCorpus*annPct;
+    const moAnnuity=annuityCorpus*0.06/12;
+    document.getElementById('ret-nps-rows').innerHTML=R('NPS Corpus at 60',fS(npsCorpus),'tot')+R('Tax-free Lump Sum ('+Math.round((1-annPct)*100)+'%)',fS(lumpsum),'grn')+R('Annuity Purchase ('+Math.round(annPct*100)+'%)',fS(annuityCorpus))+R('Monthly Pension (@6% annuity)',fmt(moAnnuity),'grn');
+  }
+}
+
+// ── REAL ESTATE ──────────────────────────────────────────────────────────────
+let _realTab='buyvrent';
+function setRealTab(t,btn){document.querySelectorAll('#page-realty .stab').forEach(b=>b.classList.remove('active'));btn.classList.add('active');_realTab=t;
+  ['buyvrent','appreciation','stampduty','rentalyield'].forEach(s=>document.getElementById('real-'+s).style.display='none');
+  document.getElementById('real-'+t).style.display='block';
+  if(t==='buyvrent')cReal();else if(t==='appreciation')cAp();else if(t==='stampduty')cSd();else cRy();
+}
+function syncRlProp(src){const r=document.getElementById('rlProp'),n=document.getElementById('rlPropN');if(src==='slider')n.value=r.value;else r.value=n.value||1000000;}
+function syncRlRent(src){const r=document.getElementById('rlRent'),n=document.getElementById('rlRentN');if(src==='slider')n.value=r.value;else r.value=n.value||5000;}
+function syncApProp(src){const r=document.getElementById('apProp'),n=document.getElementById('apPropN');if(src==='slider')n.value=r.value;else r.value=n.value||500000;}
+function syncSdProp(src){const r=document.getElementById('sdProp'),n=document.getElementById('sdPropN');if(src==='slider')n.value=r.value;else r.value=n.value||500000;}
+function syncRyProp(src){const r=document.getElementById('ryProp'),n=document.getElementById('ryPropN');if(src==='slider')n.value=r.value;else r.value=n.value||1000000;}
+function syncRyRent(src){const r=document.getElementById('ryRent'),n=document.getElementById('ryRentN');if(src==='slider')n.value=r.value;else r.value=n.value||1000;}
+function syncRyMaint(src){const r=document.getElementById('ryMaint'),n=document.getElementById('ryMaintN');if(src==='slider')n.value=r.value;else r.value=n.value||0;}
+
+function cReal(){
+  const prop=+document.getElementById('rlPropN').value||+document.getElementById('rlProp').value;
+  const dp=+document.getElementById('rlDp').value/100;
+  const rate=+document.getElementById('rlRate').value/100/12;
+  const ten=+document.getElementById('rlTen').value;
+  const app=+document.getElementById('rlApp').value/100;
+  const maint=+document.getElementById('rlMaint').value;
+  const rent=+document.getElementById('rlRentN').value||+document.getElementById('rlRent').value;
+  const rinc=+document.getElementById('rlRinc').value/100;
+  const inv=+document.getElementById('rlInv').value/100;
+  const yrs=+document.getElementById('rlYrs').value;
+  const n=ten*12;const loan=prop*(1-dp);const dpAmt=prop*dp;
+  const emi=rate?loan*rate*Math.pow(1+rate,n)/(Math.pow(1+rate,n)-1):loan/n;
+  const totalEmi=emi*yrs*12;const totalMaint=maint*12*yrs;
+  const totalBuy=dpAmt+totalEmi+totalMaint;
+  let totalRent=0,r=rent;for(let y=0;y<yrs;y++){totalRent+=r*12;r*=(1+rinc);}
+  const rentInvGrowth=dpAmt*Math.pow(1+inv,yrs);
+  const netRentCost=totalRent-(rentInvGrowth-dpAmt);
+  const propVal=prop*Math.pow(1+app,yrs);
+  const netBuyCost=totalBuy-propVal;
+  document.getElementById('rl-emi').textContent=fmt(emi);
+  document.getElementById('rl-buy-cost').textContent=fmt(totalBuy);
+  document.getElementById('rl-rent-cost').textContent=fmt(totalRent);
+  document.getElementById('rl-prop-val').textContent=fmt(propVal);
+  const verdict=document.getElementById('rl-verdict');
+  if(netBuyCost<netRentCost){verdict.textContent='🏠 Buying is better by '+fmt(netRentCost-netBuyCost)+' over '+yrs+' years';verdict.style.color='var(--green)';}
+  else{verdict.textContent='🏘️ Renting is better by '+fmt(netBuyCost-netRentCost)+' over '+yrs+' years';verdict.style.color='var(--blue)';}
+  const labels=Array.from({length:yrs},(_,i)=>'Y'+(i+1));
+  let cumBuy=dpAmt,cumRent=0,rr=rent,bData=[],rentData=[];
+  for(let y=0;y<yrs;y++){cumBuy+=emi*12+maint*12;cumRent+=rr*12;rr*=(1+rinc);bData.push(Math.round(cumBuy));rentData.push(Math.round(cumRent));}
+  mkC('rlChart','line',{labels,datasets:[{label:'Cumulative Buy Cost',data:bData,borderColor:'#e53e3e',tension:.3,pointRadius:0},{label:'Cumulative Rent Cost',data:rentData,borderColor:'#1a56db',tension:.3,pointRadius:0}]},{scales:{x:{grid:{display:false},ticks:{font:{size:8}}},y:{ticks:{callback:v=>fS(v),font:{size:9}}}}});
+}
+
+function cAp(){
+  const prop=+document.getElementById('apPropN').value||+document.getElementById('apProp').value;
+  const rate=+document.getElementById('apRate').value/100;
+  const yrs=+document.getElementById('apYrs').value;
+  const future=prop*Math.pow(1+rate,yrs);
+  const gain=future-prop;
+  document.getElementById('ap-future').textContent=fmt(future);
+  document.getElementById('ap-gain').textContent=fmt(gain);
+  document.getElementById('ap-cagr').textContent=pct(rate*100);
+  document.getElementById('ap-sub').textContent='Gain: '+fmt(gain)+' ('+pct(gain/prop*100)+')';
+}
+
+function cSd(){
+  const prop=+document.getElementById('sdPropN').value||+document.getElementById('sdProp').value;
+  const state=document.getElementById('sdState').value;
+  const gender=document.getElementById('sdGender').value;
+  const rates={mh:{m:6,f:5,j:6,reg:1},ka:{m:5,f:5,j:5,reg:1},ts:{m:4,f:4,j:4,reg:.5},ap:{m:5,f:4,j:5,reg:.5},tn:{m:7,f:7,j:7,reg:1},dl:{m:6,f:4,j:5,reg:1},up:{m:7,f:6,j:7,reg:1},gj:{m:4.9,f:4.9,j:4.9,reg:1},rj:{m:6,f:5,j:6,reg:1},wb:{m:7,f:6,j:7,reg:1}};
+  const st=rates[state]||rates.mh;
+  const sdPct=gender==='female'?st.f:gender==='joint'?st.j:st.m;
+  const stamp=prop*sdPct/100;const reg=prop*st.reg/100;const total=stamp+reg;
+  document.getElementById('sd-stamp').textContent=fmt(stamp);
+  document.getElementById('sd-reg').textContent=fmt(reg);
+  document.getElementById('sd-total').textContent=fmt(total);
+  document.getElementById('sd-sub').textContent='Stamp: '+pct(sdPct)+' + Reg: '+pct(st.reg);
+  const stateNames={mh:'Maharashtra',ka:'Karnataka',ts:'Telangana',ap:'Andhra Pradesh',tn:'Tamil Nadu',dl:'Delhi',up:'Uttar Pradesh',gj:'Gujarat',rj:'Rajasthan',wb:'West Bengal'};
+  document.getElementById('sd-note').textContent='📌 '+stateNames[state]+' stamp duty: '+pct(sdPct)+(gender==='female'?' (female concession applied)':'')+'. Registration: '+pct(st.reg)+'. Rates may vary — check local sub-registrar office for current rates.';
+}
+
+function cRy(){
+  const prop=+document.getElementById('ryPropN').value||+document.getElementById('ryProp').value;
+  const rent=+document.getElementById('ryRentN').value||+document.getElementById('ryRent').value;
+  const maint=+document.getElementById('ryMaintN').value||+document.getElementById('ryMaint').value;
+  const vac=+document.getElementById('ryVac').value;
+  const annRent=rent*(12-vac);const netAnn=annRent-maint;
+  const grossYield=prop>0?rent*12/prop*100:0;const netYield=prop>0?netAnn/prop*100:0;
+  document.getElementById('ry-yield').textContent=pct(netYield);
+  document.getElementById('ry-sub').textContent='Gross yield: '+pct(grossYield);
+  document.getElementById('ry-annual').textContent=fmt(annRent);
+  document.getElementById('ry-net').textContent=fmt(netAnn);
+}
+
+// ── INSURANCE ────────────────────────────────────────────────────────────────
+let _insTab='term';
+function setInsTab(t,btn){document.querySelectorAll('#page-insurance .stab').forEach(b=>b.classList.remove('active'));btn.classList.add('active');_insTab=t;
+  document.getElementById('ins-term').style.display=(t==='term')?'block':'none';
+  document.getElementById('ins-health').style.display=(t==='health')?'block':'none';
+  document.getElementById('ins-hra').style.display=(t==='hra')?'block':'none';
+  if(t==='term')cIns();else if(t==='health')cHi();else cHra();
+}
+function syncInsInc(src){const r=document.getElementById('insInc'),n=document.getElementById('insIncN');if(src==='slider')n.value=r.value;else r.value=n.value||300000;}
+function syncInsLoan(src){const r=document.getElementById('insLoan'),n=document.getElementById('insLoanN');if(src==='slider')n.value=r.value;else r.value=n.value||0;}
+function syncInsExp(src){const r=document.getElementById('insExp'),n=document.getElementById('insExpN');if(src==='slider')n.value=r.value;else r.value=n.value||100000;}
+function syncInsInvest(src){const r=document.getElementById('insInvest'),n=document.getElementById('insInvestN');if(src==='slider')n.value=r.value;else r.value=n.value||0;}
+function syncHraBasic(src){const r=document.getElementById('hraBasic'),n=document.getElementById('hraBasicN');if(src==='slider')n.value=r.value;else r.value=n.value||100000;}
+function syncHraRec(src){const r=document.getElementById('hraRec'),n=document.getElementById('hraRecN');if(src==='slider')n.value=r.value;else r.value=n.value||0;}
+function syncHraRent(src){const r=document.getElementById('hraRent'),n=document.getElementById('hraRentN');if(src==='slider')n.value=r.value;else r.value=n.value||0;}
+
+function cIns(){
+  const ann=+document.getElementById('insIncN').value||+document.getElementById('insInc').value;
+  const loan=+document.getElementById('insLoanN').value||+document.getElementById('insLoan').value;
+  const dep=+document.getElementById('insDep').value;
+  const exp=+document.getElementById('insExpN').value||+document.getElementById('insExp').value;
+  const invest=+document.getElementById('insInvestN').value||+document.getElementById('insInvest').value;
+  const incRep=ann*15;const expCov=exp*10;const depAdj=dep*500000;
+  const cover=Math.max(0,incRep+loan+expCov+depAdj-invest);
+  document.getElementById('ins-cover').textContent=fS(cover);
+  document.getElementById('ins-inc-rep').textContent=fS(incRep);
+  document.getElementById('ins-loan-cov').textContent=fS(loan);
+  document.getElementById('ins-exp-cov').textContent=fS(expCov+depAdj);
+  document.getElementById('ins-invest-ded').textContent=fS(invest);
+}
+
+function cHi(){
+  const age=+document.getElementById('hiAge').value;
+  const type=document.getElementById('hiType').value;
+  const si=+document.getElementById('hiSI').value;
+  const city=document.getElementById('hiCity').value;
+  const pec=document.getElementById('hiPec').value;
+  const base={self:3500,couple:6500,family3:9000,family4:11000,family5:13000};
+  let prem=base[type]||11000;
+  prem*=(si/10);
+  if(age>45)prem*=1.5;else if(age>35)prem*=1.2;
+  if(city==='metro')prem*=1.15;else if(city==='t3')prem*=0.9;
+  if(pec==='both')prem*=1.5;else if(pec!=='none')prem*=1.25;
+  const ded80d=Math.min(25000,prem);
+  document.getElementById('hi-premium').textContent=fmt(Math.round(prem));
+  document.getElementById('hi-monthly').textContent=fmt(Math.round(prem/12));
+  document.getElementById('hi-80d').textContent=fmt(ded80d);
+  document.getElementById('hi-sub').textContent='Range: '+fmt(prem*0.85)+' – '+fmt(prem*1.15);
+}
+
+function cHra(){
+  const basic=+document.getElementById('hraBasicN').value||+document.getElementById('hraBasic').value;
+  const hraRec=+document.getElementById('hraRecN').value||+document.getElementById('hraRec').value;
+  const rent=+document.getElementById('hraRentN').value||+document.getElementById('hraRent').value;
+  const metro=document.getElementById('hraCity').value==='metro';
+  const pct50=basic*(metro?0.5:0.4);const rentExcess=Math.max(0,rent-basic*0.1);
+  const exempt=Math.min(hraRec,pct50,rentExcess);const taxable=hraRec-exempt;
+  document.getElementById('hra-exempt').textContent=fmt(exempt);
+  document.getElementById('hra-received').textContent=fmt(hraRec);
+  document.getElementById('hra-basic-pct').textContent=fmt(pct50);
+  document.getElementById('hra-rent-excess').textContent=fmt(rentExcess);
+  document.getElementById('hra-taxable').textContent=fmt(taxable);
+  document.getElementById('hra-sub').textContent='Taxable HRA: '+fmt(taxable);
+}
+
+// ── BUDGET ───────────────────────────────────────────────────────────────────
+function syncBdInc(src){const r=document.getElementById('bdInc'),n=document.getElementById('bdIncN');if(src==='slider')n.value=r.value;else r.value=n.value||10000;}
+
+function cBd(){
+  const inc=+document.getElementById('bdIncN').value||+document.getElementById('bdInc').value;
+  const needs=(+document.getElementById('bdRent').value||0)+(+document.getElementById('bdFood').value||0)+(+document.getElementById('bdUtil').value||0)+(+document.getElementById('bdTrans').value||0)+(+document.getElementById('bdIns').value||0);
+  const wants=(+document.getElementById('bdEnt').value||0)+(+document.getElementById('bdShop').value||0)+(+document.getElementById('bdSub').value||0)+(+document.getElementById('bdTravel').value||0);
+  const sav=(+document.getElementById('bdSip').value||0)+(+document.getElementById('bdEmerg').value||0)+(+document.getElementById('bdOther').value||0);
+  const total=needs+wants+sav;const surplus=inc-total;
+  const needsPct=inc>0?needs/inc*100:0;const wantsPct=inc>0?wants/inc*100:0;const savPct=inc>0?sav/inc*100:0;
+  const supEl=document.getElementById('bd-surplus');
+  supEl.textContent=surplus>=0?fmt(surplus):'-'+fmt(Math.abs(surplus));
+  supEl.style.color=surplus>=0?'#059669':'#e53e3e';
+  document.getElementById('bd-hero-sub').textContent=surplus>=0?'unallocated this month':'over budget this month';
+  document.getElementById('bd-needs').textContent=fmt(needs);document.getElementById('bd-wants').textContent=fmt(wants);document.getElementById('bd-savings').textContent=fmt(sav);
+  document.getElementById('bd-rate').textContent=pct(savPct);
+  // Bars
+  function bar(label,actual,ideal,color){const pctA=Math.min(100,inc>0?actual/inc*100:0);return`<div class="budget-bar-row"><div class="budget-bar-label">${label} (${pct(pctA,0)})</div><div class="budget-bar-track"><div class="budget-bar-fill" style="width:${pctA}%;background:${color}"></div></div><div class="budget-bar-val">${fmt(actual)}</div></div>`;}
+  document.getElementById('bd-bars').innerHTML=bar('Needs (ideal 50%)',needs,50,'#e53e3e')+bar('Wants (ideal 30%)',wants,30,'#d97706')+bar('Savings (ideal 20%)',sav,20,'#059669')+bar('Surplus',Math.max(0,surplus),0,'#1a56db');
+  mkC('bdChart','doughnut',{labels:['Needs','Wants','Savings','Surplus'],datasets:[{data:[needs,wants,sav,Math.max(0,surplus)],backgroundColor:['rgba(229,62,62,.8)','rgba(217,119,6,.8)','rgba(5,150,105,.8)','rgba(26,86,219,.5)'],borderWidth:0}]});
+  // Tips
+  const tips=[];
+  if(needsPct>60)tips.push({t:'⚠️ High Needs',m:'Your needs are '+pct(needsPct,0)+' of income (ideal: 50%). Consider reducing fixed costs like rent or EMI.'});
+  if(savPct<10)tips.push({t:'⚠️ Low Savings',m:'You\'re saving only '+pct(savPct,0)+'. Try to save at least 20%. Even ₹5,000/mo in SIP makes a big difference.'});
+  if(surplus<0)tips.push({t:'🔴 Over Budget',m:'You\'re spending '+fmt(Math.abs(surplus))+' more than you earn. Review wants category first.'});
+  if(savPct>=20)tips.push({t:'✅ Good Savings Rate',m:'You\'re saving '+pct(savPct,0)+' — on track. Consider investing surplus in SIP or FD.'});
+  if(needsPct<=50&&wantsPct<=30&&savPct>=20)tips.push({t:'🎉 Healthy Budget',m:'Your 50/30/20 split is ideal. Keep it up!'});
+  document.getElementById('bd-tips-rows').innerHTML=tips.length?tips.map(t=>`<div style="margin-bottom:.7rem"><div style="font-weight:600;font-size:.82rem;margin-bottom:2px">${t.t}</div><div style="font-size:.78rem;color:var(--muted)">${t.m}</div></div>`).join(''):'<div style="color:var(--muted);font-size:.82rem">Enter your income and expenses to see budget health tips.</div>';
+}
+
+// ── INFLATION ────────────────────────────────────────────────────────────────
+let _inflTab='future';
+function setInflTab(t,btn){document.querySelectorAll('#page-inflation .stab').forEach(b=>b.classList.remove('active'));btn.classList.add('active');_inflTab=t;
+  document.getElementById('infl-future').style.display=(t==='future')?'block':'none';
+  document.getElementById('infl-real').style.display=(t==='real')?'block':'none';
+  document.getElementById('infl-purchasing').style.display=(t==='purchasing')?'block':'none';
+  if(t==='future')cInfl();else if(t==='real')cInflReal();else cPp();
+}
+function syncIfAmt(src){const r=document.getElementById('ifAmt'),n=document.getElementById('ifAmtN');if(src==='slider')n.value=r.value;else r.value=n.value||1000;}
+function syncIrAmt(src){const r=document.getElementById('irAmt'),n=document.getElementById('irAmtN');if(src==='slider')n.value=r.value;else r.value=n.value||10000;}
+function syncPpAmt(src){const r=document.getElementById('ppAmt'),n=document.getElementById('ppAmtN');if(src==='slider')n.value=r.value;else r.value=n.value||1000;}
+
+function setInflScenario(amt,rate,yrs,btn){document.querySelectorAll('.scenario-card').forEach(b=>b.classList.remove('sel'));btn.classList.add('sel');document.getElementById('ifAmtN').value=amt;document.getElementById('ifAmt').value=amt;document.getElementById('ifRate').value=rate;document.getElementById('if-rate-lbl').textContent=rate+'%';document.getElementById('ifYrs').value=yrs;document.getElementById('if-yrs-lbl').textContent=yrs+' yrs';cInfl();}
+
+function cInfl(){
+  const amt=+document.getElementById('ifAmtN').value||+document.getElementById('ifAmt').value;
+  const rate=+document.getElementById('ifRate').value/100;
+  const yrs=+document.getElementById('ifYrs').value;
+  const future=amt*Math.pow(1+rate,yrs);const increase=future-amt;
+  document.getElementById('if-future').textContent=fmt(future);
+  document.getElementById('if-increase').textContent=fmt(increase);
+  document.getElementById('if-mult').textContent=(future/amt).toFixed(1)+'x';
+  document.getElementById('if-sub').textContent='in '+yrs+' years @ '+pct(rate*100)+' inflation';
+  const labels=[],data=[];for(let y=0;y<=yrs;y++){labels.push('Y'+y);data.push(Math.round(amt*Math.pow(1+rate,y)));}
+  mkC('ifChart','line',{labels,datasets:[{label:'Future Cost',data,borderColor:'#e53e3e',backgroundColor:'rgba(229,62,62,.1)',fill:true,tension:.3,pointRadius:0}]},{scales:{x:{grid:{display:false},ticks:{font:{size:8}}},y:{ticks:{callback:v=>fS(v),font:{size:9}}}}});
+}
+
+function cInflReal(){
+  const nom=+document.getElementById('irNom').value/100;
+  const inf=+document.getElementById('irInf').value/100;
+  const amt=+document.getElementById('irAmtN').value||+document.getElementById('irAmt').value;
+  const yrs=+document.getElementById('irYrs').value;
+  const real=(1+nom)/(1+inf)-1;
+  const nomVal=amt*Math.pow(1+nom,yrs);const realVal=amt*Math.pow(1+real,yrs);
+  document.getElementById('ir-real').textContent=pct(real*100);
+  document.getElementById('ir-nom-val').textContent=fmt(nomVal);
+  document.getElementById('ir-real-val').textContent=fmt(realVal);
+  document.getElementById('ir-sub').textContent='Nominal: '+pct(nom*100)+' | Inflation: '+pct(inf*100);
+}
+
+function cPp(){
+  const amt=+document.getElementById('ppAmtN').value||+document.getElementById('ppAmt').value;
+  const rate=+document.getElementById('ppRate').value/100;
+  const yrs=+document.getElementById('ppYrs').value;
+  const ppVal=amt/Math.pow(1+rate,yrs);const lost=amt-ppVal;const pctLost=lost/amt*100;
+  document.getElementById('pp-val').textContent=fmt(ppVal);
+  document.getElementById('pp-lost').textContent=fmt(lost);
+  document.getElementById('pp-pct').textContent=pct(pctLost);
+  document.getElementById('pp-sub').textContent='Today\'s '+fmt(amt)+' will buy only '+fmt(ppVal)+' worth in '+yrs+' years';
+  const labels=[],data=[];for(let y=0;y<=yrs;y++){labels.push('Y'+y);data.push(Math.round(amt/Math.pow(1+rate,y)));}
+  mkC('ppChart','line',{labels,datasets:[{label:'Purchasing Power',data,borderColor:'#d97706',backgroundColor:'rgba(217,119,6,.1)',fill:true,tension:.3,pointRadius:0}]},{scales:{x:{grid:{display:false},ticks:{font:{size:8}}},y:{ticks:{callback:v=>fS(v),font:{size:9}}}}});
+}
+
 // ── INIT ──────────────────────────────────────────────────────────────────────
 function resetAll(){
   // Reset master hidden fields
@@ -1932,8 +2402,591 @@ window.addEventListener('load', () => {
   setVF();
   // Force immediate calc after short delay (DOM needs to settle)
   setTimeout(() => { if(typeof calc==='function') calc(); }, 50);
+  // Init new modules
+  setSavTab('fd', document.querySelector('#page-savings .stab.active'));
+  setSipTab('sip', document.querySelector('#page-sip .stab.active'));
+  setRetTab('corpus', document.querySelector('#page-retire .stab.active'));
+  setRealTab('buyvrent', document.querySelector('#page-realty .stab.active'));
+  setInsTab('term', document.querySelector('#page-insurance .stab.active'));
+  setInflTab('future', document.querySelector('#page-inflation .stab.active'));
+  cBd();
 });
 </script>
+<!-- ═══════════════════════════════════════════════════════
+     SAVINGS PAGE
+════════════════════════════════════════════════════════ -->
+<div class="page" id="page-savings">
+  <div class="sec-title">Savings Calculator</div>
+  <div class="sec-sub">Compare FD, RD, PPF, NSC and Sukanya Samriddhi returns. Find which instrument suits your goal.</div>
+  <div class="stabs">
+    <button class="stab active" onclick="setSavTab('fd',this)">Fixed Deposit</button>
+    <button class="stab" onclick="setSavTab('rd',this)">Recurring Deposit</button>
+    <button class="stab" onclick="setSavTab('ppf',this)">PPF</button>
+    <button class="stab" onclick="setSavTab('nsc',this)">NSC</button>
+    <button class="stab" onclick="setSavTab('ssa',this)">Sukanya Samriddhi</button>
+  </div>
+  <div class="info" id="sav-info"></div>
+  <div class="g2">
+    <div class="card">
+      <div class="ctitle" id="sav-input-title">FD Details</div>
+      <div class="field" id="sav-principal-wrap">
+        <div class="fl"><span id="sav-p-lbl">Principal Amount (₹)</span></div>
+        <div class="sw">
+          <input type="range" id="savAmt" min="1000" max="10000000" step="1000" value="100000" oninput="syncSavAmt('slider');cSav()">
+          <input type="number" id="savAmtN" value="100000" class="ninput" oninput="cSav()" onchange="syncSavAmt('input');cSav()">
+        </div>
+      </div>
+      <div class="field" id="sav-monthly-wrap" style="display:none">
+        <div class="fl"><span>Monthly Instalment (₹)</span></div>
+        <div class="sw">
+          <input type="range" id="savMo" min="500" max="150000" step="500" value="10000" oninput="syncSavMo('slider');cSav()">
+          <input type="number" id="savMoN" value="10000" class="ninput" oninput="cSav()" onchange="syncSavMo('input');cSav()">
+        </div>
+      </div>
+      <div class="field">
+        <div class="fl"><span id="sav-rate-lbl">Interest Rate (% p.a.)</span><span class="market-tag" id="sav-rate-market">Current: 7.1%</span></div>
+        <div class="sw">
+          <input type="range" id="savRate" min="4" max="9.5" step="0.05" value="7.1" oninput="syncSavRate('slider');cSav()">
+          <input type="number" id="savRateN" value="7.1" step="0.05" class="ninput" style="width:80px" oninput="cSav()" onchange="syncSavRate('input');cSav()">
+          <span class="unit">%</span>
+        </div>
+      </div>
+      <div class="field" id="sav-tenure-wrap">
+        <div class="fl"><span id="sav-ten-lbl">Tenure (Years)</span></div>
+        <div class="sw">
+          <input type="range" id="savTen" min="1" max="15" step="1" value="5" oninput="syncSavTen('slider');cSav()">
+          <input type="number" id="savTenN" value="5" class="ninput" style="width:80px" oninput="cSav()" onchange="syncSavTen('input');cSav()">
+          <span class="unit">yrs</span>
+        </div>
+      </div>
+      <div class="field" id="sav-comp-wrap">
+        <div class="fl"><span>Compounding Frequency</span></div>
+        <select id="savComp" onchange="cSav()">
+          <option value="4">Quarterly (standard)</option>
+          <option value="12">Monthly</option>
+          <option value="2">Half-yearly</option>
+          <option value="1">Annually</option>
+        </select>
+      </div>
+    </div>
+    <div>
+      <div class="result-hero">
+        <div class="rh-label">Maturity Amount</div>
+        <div class="rh-val" id="sav-maturity">₹0</div>
+        <div class="rh-sub" id="sav-hero-sub">Total interest earned</div>
+      </div>
+      <div class="metrics">
+        <div class="metric"><div class="mlabel">Amount Invested</div><div class="mval blue" id="sav-invested">₹0</div></div>
+        <div class="metric"><div class="mlabel">Interest Earned</div><div class="mval green" id="sav-interest">₹0</div></div>
+        <div class="metric"><div class="mlabel">Effective Yield</div><div class="mval amber" id="sav-yield">0%</div></div>
+        <div class="metric"><div class="mlabel">Tax Note</div><div class="mval" id="sav-tax-note" style="font-size:.72rem">—</div></div>
+      </div>
+      <div class="card">
+        <div class="ctitle">Growth Breakdown</div>
+        <canvas id="savChart" height="140"></canvas>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="ctitle">Year-wise Growth Table</div>
+    <div class="tbl-wrap">
+      <table><thead><tr><th>Year</th><th>Opening Balance</th><th>Interest Earned</th><th id="sav-col4h">Closing Balance</th></tr></thead>
+      <tbody id="sav-table"></tbody></table>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     SIP / MUTUAL FUND PAGE
+════════════════════════════════════════════════════════ -->
+<div class="page" id="page-sip">
+  <div class="sec-title">SIP & Mutual Fund Calculator</div>
+  <div class="sec-sub">Plan your SIP returns, lump sum growth, goal-based investing, and ELSS tax saving under Sec 80C.</div>
+  <div class="stabs">
+    <button class="stab active" onclick="setSipTab('sip',this)">SIP Returns</button>
+    <button class="stab" onclick="setSipTab('lump',this)">Lump Sum</button>
+    <button class="stab" onclick="setSipTab('goal',this)">Goal Planner</button>
+    <button class="stab" onclick="setSipTab('elss',this)">ELSS Tax Saver</button>
+  </div>
+  <div class="g2">
+    <div class="card">
+      <div class="ctitle" id="sip-input-title">SIP Details</div>
+      <div class="field" id="sip-monthly-wrap">
+        <div class="fl"><span id="sip-p-lbl">Monthly SIP Amount (₹)</span></div>
+        <div class="sw">
+          <input type="range" id="sipAmt" min="500" max="200000" step="500" value="10000" oninput="syncSipAmt('slider');cSip()">
+          <input type="number" id="sipAmtN" value="10000" class="ninput" oninput="cSip()" onchange="syncSipAmt('input');cSip()">
+        </div>
+      </div>
+      <div class="field" id="sip-lump-wrap" style="display:none">
+        <div class="fl"><span>Lump Sum Amount (₹)</span></div>
+        <div class="sw">
+          <input type="range" id="sipLump" min="10000" max="50000000" step="10000" value="500000" oninput="syncSipLump('slider');cSip()">
+          <input type="number" id="sipLumpN" value="500000" class="ninput" oninput="cSip()" onchange="syncSipLump('input');cSip()">
+        </div>
+      </div>
+      <div class="field" id="sip-goal-wrap" style="display:none">
+        <div class="fl"><span>Target Corpus (₹)</span></div>
+        <div class="sw">
+          <input type="range" id="sipGoal" min="100000" max="100000000" step="100000" value="10000000" oninput="syncSipGoal('slider');cSip()">
+          <input type="number" id="sipGoalN" value="10000000" class="ninput" oninput="cSip()" onchange="syncSipGoal('input');cSip()">
+        </div>
+      </div>
+      <div class="field">
+        <div class="fl"><span>Expected Annual Return (%)</span><span class="sv" id="sip-rate-lbl">12%</span></div>
+        <div class="slw"><input type="range" id="sipRate" min="4" max="30" step="0.5" value="12" oninput="ss('sipRate','sip-rate-lbl',1,'',false,'%');cSip()"></div>
+        <div class="sub-hint">Equity MF ~10–14% historical CAGR · Debt ~6–8% · Balanced ~9–11%</div>
+      </div>
+      <div class="field">
+        <div class="fl"><span>Investment Period (Years)</span><span class="sv" id="sip-ten-lbl">15 yrs</span></div>
+        <div class="slw"><input type="range" id="sipTen" min="1" max="40" step="1" value="15" oninput="ss('sipTen','sip-ten-lbl',0,'',false,' yrs');cSip()"></div>
+      </div>
+      <div class="field" id="sip-step-wrap">
+        <div class="fl"><span>Annual Step-up (%)</span><span class="sv" id="sip-step-lbl">10%</span></div>
+        <div class="slw"><input type="range" id="sipStep" min="0" max="25" step="1" value="10" oninput="ss('sipStep','sip-step-lbl',0,'',false,'%');cSip()"></div>
+        <div class="sub-hint">Increase SIP by this % every year (salary hike aligned)</div>
+      </div>
+    </div>
+    <div>
+      <div class="result-hero">
+        <div class="rh-label" id="sip-hero-label">Total Corpus at Maturity</div>
+        <div class="rh-val" id="sip-corpus">₹0</div>
+        <div class="rh-sub" id="sip-hero-sub">wealth gained</div>
+      </div>
+      <div class="metrics">
+        <div class="metric"><div class="mlabel" id="sip-m1l">Total Invested</div><div class="mval blue" id="sip-invested">₹0</div></div>
+        <div class="metric"><div class="mlabel">Returns Earned</div><div class="mval green" id="sip-returns">₹0</div></div>
+        <div class="metric"><div class="mlabel">CAGR</div><div class="mval amber" id="sip-cagr">0%</div></div>
+        <div class="metric"><div class="mlabel" id="sip-m4l">Wealth Multiplier</div><div class="mval" id="sip-mult">0x</div></div>
+      </div>
+      <div class="card">
+        <div class="ctitle">Corpus Growth Over Time</div>
+        <canvas id="sipChart" height="140"></canvas>
+      </div>
+    </div>
+  </div>
+  <div class="card" id="sip-elss-info" style="display:none">
+    <div class="ctitle">ELSS Tax Saving Summary</div>
+    <div class="sg" id="sip-elss-rows"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     RETIREMENT PAGE
+════════════════════════════════════════════════════════ -->
+<div class="page" id="page-retire">
+  <div class="sec-title">Retirement Planner</div>
+  <div class="sec-sub">Calculate how much corpus you need, how to get there, and whether you're on track. Includes NPS projection.</div>
+  <div class="stabs">
+    <button class="stab active" onclick="setRetTab('corpus',this)">Corpus Needed</button>
+    <button class="stab" onclick="setRetTab('nps',this)">NPS Projection</button>
+    <button class="stab" onclick="setRetTab('early',this)">FIRE / Early Retire</button>
+  </div>
+  <div class="g2">
+    <div class="card">
+      <div class="ctitle" id="ret-input-title">Retirement Inputs</div>
+      <div class="field">
+        <div class="fl"><span>Current Age</span><span class="sv" id="ret-age-lbl">30 yrs</span></div>
+        <div class="slw"><input type="range" id="retAge" min="20" max="60" step="1" value="30" oninput="ss('retAge','ret-age-lbl',0,'',false,' yrs');cRet()"></div>
+      </div>
+      <div class="field" id="ret-retire-age-wrap">
+        <div class="fl"><span>Retirement Age</span><span class="sv" id="ret-ret-lbl">60 yrs</span></div>
+        <div class="slw"><input type="range" id="retRetAge" min="40" max="70" step="1" value="60" oninput="ss('retRetAge','ret-ret-lbl',0,'',false,' yrs');cRet()"></div>
+      </div>
+      <div class="field">
+        <div class="fl"><span>Life Expectancy</span><span class="sv" id="ret-life-lbl">85 yrs</span></div>
+        <div class="slw"><input type="range" id="retLife" min="70" max="100" step="1" value="85" oninput="ss('retLife','ret-life-lbl',0,'',false,' yrs');cRet()"></div>
+      </div>
+      <div class="field">
+        <div class="fl"><span>Monthly Expenses Today (₹)</span></div>
+        <div class="sw">
+          <input type="range" id="retExp" min="10000" max="500000" step="5000" value="50000" oninput="syncRetExp('slider');cRet()">
+          <input type="number" id="retExpN" value="50000" class="ninput" oninput="cRet()" onchange="syncRetExp('input');cRet()">
+        </div>
+      </div>
+      <div class="field">
+        <div class="fl"><span>Expected Inflation (%)</span><span class="sv" id="ret-inf-lbl">6%</span></div>
+        <div class="slw"><input type="range" id="retInf" min="3" max="10" step="0.5" value="6" oninput="ss('retInf','ret-inf-lbl',1,'',false,'%');cRet()"></div>
+      </div>
+      <div class="field">
+        <div class="fl"><span>Post-retirement Return (%)</span><span class="sv" id="ret-pret-lbl">7%</span></div>
+        <div class="slw"><input type="range" id="retPostRet" min="4" max="12" step="0.5" value="7" oninput="ss('retPostRet','ret-pret-lbl',1,'',false,'%');cRet()"></div>
+        <div class="sub-hint">Expected return on corpus after retirement (conservative, debt-heavy)</div>
+      </div>
+      <div class="field">
+        <div class="fl"><span>Current Savings Already Invested (₹)</span></div>
+        <div class="sw">
+          <input type="range" id="retSaved" min="0" max="50000000" step="100000" value="500000" oninput="syncRetSaved('slider');cRet()">
+          <input type="number" id="retSavedN" value="500000" class="ninput" oninput="cRet()" onchange="syncRetSaved('input');cRet()">
+        </div>
+      </div>
+      <div class="field" id="ret-growrate-wrap">
+        <div class="fl"><span>Pre-retirement Growth Rate (%)</span><span class="sv" id="ret-grow-lbl">12%</span></div>
+        <div class="slw"><input type="range" id="retGrow" min="6" max="18" step="0.5" value="12" oninput="ss('retGrow','ret-grow-lbl',1,'',false,'%');cRet()"></div>
+      </div>
+      <!-- NPS-specific -->
+      <div id="ret-nps-fields" style="display:none">
+        <div class="field">
+          <div class="fl"><span>Monthly NPS Contribution (₹)</span></div>
+          <div class="sw">
+            <input type="range" id="npsContr" min="500" max="100000" step="500" value="5000" oninput="syncNpsContr('slider');cRet()">
+            <input type="number" id="npsContrN" value="5000" class="ninput" oninput="cRet()" onchange="syncNpsContr('input');cRet()">
+          </div>
+        </div>
+        <div class="field">
+          <div class="fl"><span>Equity Allocation (%)</span><span class="sv" id="nps-eq-lbl">75%</span></div>
+          <div class="slw"><input type="range" id="npsEq" min="25" max="75" step="5" value="75" oninput="ss('npsEq','nps-eq-lbl',0,'',false,'%');cRet()"></div>
+          <div class="sub-hint">Max 75% in equity (Tier I). NPS blended return auto-calculated.</div>
+        </div>
+        <div class="field">
+          <div class="fl"><span>Annuity Purchase % (at 60)</span><span class="sv" id="nps-ann-lbl">40%</span></div>
+          <div class="slw"><input type="range" id="npsAnn" min="40" max="100" step="5" value="40" oninput="ss('npsAnn','nps-ann-lbl',0,'',false,'%');cRet()"></div>
+          <div class="sub-hint">Min 40% must be used to buy annuity. Rest is tax-free lump sum.</div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="result-hero">
+        <div class="rh-label" id="ret-hero-label">Retirement Corpus Required</div>
+        <div class="rh-val" id="ret-corpus">₹0</div>
+        <div class="rh-sub" id="ret-hero-sub">at retirement age</div>
+      </div>
+      <div class="metrics">
+        <div class="metric"><div class="mlabel">Years to Retire</div><div class="mval blue" id="ret-yrs">0</div></div>
+        <div class="metric"><div class="mlabel">Monthly Need at Retire</div><div class="mval" id="ret-mo-need">₹0</div></div>
+        <div class="metric"><div class="mlabel">Monthly SIP Needed</div><div class="mval green" id="ret-sip-need">₹0</div></div>
+        <div class="metric"><div class="mlabel">Savings Shortfall/Surplus</div><div class="mval" id="ret-gap">₹0</div></div>
+      </div>
+      <div class="card" id="ret-nps-summary" style="display:none">
+        <div class="ctitle">NPS Maturity Summary</div>
+        <div class="sg" id="ret-nps-rows"></div>
+      </div>
+      <div class="card">
+        <div class="ctitle">Corpus Accumulation</div>
+        <canvas id="retChart" height="150"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     REAL ESTATE PAGE
+════════════════════════════════════════════════════════ -->
+<div class="page" id="page-realty">
+  <div class="sec-title">Real Estate Calculator</div>
+  <div class="sec-sub">Buy vs rent analysis, property appreciation, stamp duty & registration, and rental yield.</div>
+  <div class="stabs">
+    <button class="stab active" onclick="setRealTab('buyvrent',this)">Buy vs Rent</button>
+    <button class="stab" onclick="setRealTab('appreciation',this)">Property Value</button>
+    <button class="stab" onclick="setRealTab('stampduty',this)">Stamp Duty</button>
+    <button class="stab" onclick="setRealTab('rentalyield',this)">Rental Yield</button>
+  </div>
+  <div id="real-buyvrent">
+    <div class="g2">
+      <div class="card">
+        <div class="ctitle">Buy Scenario</div>
+        <div class="field">
+          <div class="fl"><span>Property Price (₹)</span></div>
+          <div class="sw"><input type="range" id="rlProp" min="1000000" max="100000000" step="100000" value="8000000" oninput="syncRlProp('slider');cReal()"><input type="number" id="rlPropN" value="8000000" class="ninput" oninput="cReal()" onchange="syncRlProp('input');cReal()"></div>
+        </div>
+        <div class="field">
+          <div class="fl"><span>Down Payment (%)</span><span class="sv" id="rl-dp-lbl">20%</span></div>
+          <div class="slw"><input type="range" id="rlDp" min="10" max="50" step="5" value="20" oninput="ss('rlDp','rl-dp-lbl',0,'',false,'%');cReal()"></div>
+        </div>
+        <div class="field">
+          <div class="fl"><span>Home Loan Rate (%)</span><span class="sv" id="rl-rate-lbl">8.5%</span></div>
+          <div class="slw"><input type="range" id="rlRate" min="7" max="12" step="0.1" value="8.5" oninput="ss('rlRate','rl-rate-lbl',1,'',false,'%');cReal()"></div>
+        </div>
+        <div class="field">
+          <div class="fl"><span>Loan Tenure (Years)</span><span class="sv" id="rl-ten-lbl">20 yrs</span></div>
+          <div class="slw"><input type="range" id="rlTen" min="5" max="30" step="1" value="20" oninput="ss('rlTen','rl-ten-lbl',0,'',false,' yrs');cReal()"></div>
+        </div>
+        <div class="field">
+          <div class="fl"><span>Property Appreciation (%/yr)</span><span class="sv" id="rl-app-lbl">7%</span></div>
+          <div class="slw"><input type="range" id="rlApp" min="2" max="15" step="0.5" value="7" oninput="ss('rlApp','rl-app-lbl',1,'',false,'%');cReal()"></div>
+        </div>
+        <div class="field">
+          <div class="fl"><span>Maintenance (₹/mo)</span><span class="sv" id="rl-maint-lbl">₹5,000</span></div>
+          <div class="slw"><input type="range" id="rlMaint" min="0" max="50000" step="500" value="5000" oninput="ss('rlMaint','rl-maint-lbl',0,'₹',true,'');cReal()"></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="ctitle">Rent Scenario</div>
+        <div class="field">
+          <div class="fl"><span>Current Monthly Rent (₹)</span></div>
+          <div class="sw"><input type="range" id="rlRent" min="5000" max="200000" step="1000" value="25000" oninput="syncRlRent('slider');cReal()"><input type="number" id="rlRentN" value="25000" class="ninput" oninput="cReal()" onchange="syncRlRent('input');cReal()"></div>
+        </div>
+        <div class="field">
+          <div class="fl"><span>Annual Rent Increase (%)</span><span class="sv" id="rl-rinc-lbl">5%</span></div>
+          <div class="slw"><input type="range" id="rlRinc" min="0" max="15" step="1" value="5" oninput="ss('rlRinc','rl-rinc-lbl',0,'',false,'%');cReal()"></div>
+        </div>
+        <div class="field">
+          <div class="fl"><span>Investment Return on Down Payment (%)</span><span class="sv" id="rl-inv-lbl">12%</span></div>
+          <div class="slw"><input type="range" id="rlInv" min="6" max="18" step="0.5" value="12" oninput="ss('rlInv','rl-inv-lbl',1,'',false,'%');cReal()"></div>
+          <div class="sub-hint">What the down payment could earn if invested in MF/equity instead</div>
+        </div>
+        <div class="field">
+          <div class="fl"><span>Analysis Period (Years)</span><span class="sv" id="rl-yrs-lbl">20 yrs</span></div>
+          <div class="slw"><input type="range" id="rlYrs" min="5" max="30" step="1" value="20" oninput="ss('rlYrs','rl-yrs-lbl',0,'',false,' yrs');cReal()"></div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="ctitle">Buy vs Rent Verdict</div>
+      <div class="verd" id="rl-verdict">—</div>
+      <div class="metrics4">
+        <div class="metric"><div class="mlabel">EMI</div><div class="mval blue" id="rl-emi">₹0</div></div>
+        <div class="metric"><div class="mlabel">Total Buy Cost</div><div class="mval coral" id="rl-buy-cost">₹0</div></div>
+        <div class="metric"><div class="mlabel">Total Rent Cost</div><div class="mval amber" id="rl-rent-cost">₹0</div></div>
+        <div class="metric"><div class="mlabel">Property Value (end)</div><div class="mval green" id="rl-prop-val">₹0</div></div>
+      </div>
+      <canvas id="rlChart" height="90"></canvas>
+    </div>
+  </div>
+  <div id="real-appreciation" style="display:none">
+    <div class="g2">
+      <div class="card">
+        <div class="ctitle">Property Appreciation</div>
+        <div class="field"><div class="fl"><span>Current Property Value (₹)</span></div><div class="sw"><input type="range" id="apProp" min="500000" max="100000000" step="100000" value="5000000" oninput="syncApProp('slider');cAp()"><input type="number" id="apPropN" value="5000000" class="ninput" oninput="cAp()" onchange="syncApProp('input');cAp()"></div></div>
+        <div class="field"><div class="fl"><span>Annual Appreciation (%)</span><span class="sv" id="ap-rate-lbl">7%</span></div><div class="slw"><input type="range" id="apRate" min="2" max="20" step="0.5" value="7" oninput="ss('apRate','ap-rate-lbl',1,'',false,'%');cAp()"></div></div>
+        <div class="field"><div class="fl"><span>Years</span><span class="sv" id="ap-yrs-lbl">10 yrs</span></div><div class="slw"><input type="range" id="apYrs" min="1" max="30" step="1" value="10" oninput="ss('apYrs','ap-yrs-lbl',0,'',false,' yrs');cAp()"></div></div>
+      </div>
+      <div>
+        <div class="result-hero"><div class="rh-label">Future Property Value</div><div class="rh-val" id="ap-future">₹0</div><div class="rh-sub" id="ap-sub">appreciation</div></div>
+        <div class="metrics"><div class="metric"><div class="mlabel">Capital Gain</div><div class="mval green" id="ap-gain">₹0</div></div><div class="metric"><div class="mlabel">CAGR</div><div class="mval blue" id="ap-cagr">0%</div></div></div>
+      </div>
+    </div>
+  </div>
+  <div id="real-stampduty" style="display:none">
+    <div class="g2">
+      <div class="card">
+        <div class="ctitle">Stamp Duty & Registration</div>
+        <div class="field"><div class="fl"><span>Property Value (₹)</span></div><div class="sw"><input type="range" id="sdProp" min="500000" max="100000000" step="100000" value="8000000" oninput="syncSdProp('slider');cSd()"><input type="number" id="sdPropN" value="8000000" class="ninput" oninput="cSd()" onchange="syncSdProp('input');cSd()"></div></div>
+        <div class="field"><div class="fl"><span>State</span></div><select id="sdState" onchange="cSd()"><option value="mh">Maharashtra</option><option value="ka">Karnataka</option><option value="ts">Telangana</option><option value="ap">Andhra Pradesh</option><option value="tn">Tamil Nadu</option><option value="dl">Delhi</option><option value="up">Uttar Pradesh</option><option value="gj">Gujarat</option><option value="rj">Rajasthan</option><option value="wb">West Bengal</option></select></div>
+        <div class="field"><div class="fl"><span>Owner Gender</span></div><select id="sdGender" onchange="cSd()"><option value="male">Male</option><option value="female">Female (concession applies)</option><option value="joint">Joint</option></select></div>
+      </div>
+      <div>
+        <div class="result-hero"><div class="rh-label">Total Registration Cost</div><div class="rh-val" id="sd-total">₹0</div><div class="rh-sub" id="sd-sub">stamp duty + registration</div></div>
+        <div class="metrics"><div class="metric"><div class="mlabel">Stamp Duty</div><div class="mval coral" id="sd-stamp">₹0</div></div><div class="metric"><div class="mlabel">Registration Fee</div><div class="mval amber" id="sd-reg">₹0</div></div></div>
+        <div class="info" id="sd-note"></div>
+      </div>
+    </div>
+  </div>
+  <div id="real-rentalyield" style="display:none">
+    <div class="g2">
+      <div class="card">
+        <div class="ctitle">Rental Yield Analysis</div>
+        <div class="field"><div class="fl"><span>Property Value (₹)</span></div><div class="sw"><input type="range" id="ryProp" min="1000000" max="100000000" step="100000" value="8000000" oninput="syncRyProp('slider');cRy()"><input type="number" id="ryPropN" value="8000000" class="ninput" oninput="cRy()" onchange="syncRyProp('input');cRy()"></div></div>
+        <div class="field"><div class="fl"><span>Monthly Rent (₹)</span></div><div class="sw"><input type="range" id="ryRent" min="1000" max="300000" step="1000" value="25000" oninput="syncRyRent('slider');cRy()"><input type="number" id="ryRentN" value="25000" class="ninput" oninput="cRy()" onchange="syncRyRent('input');cRy()"></div></div>
+        <div class="field"><div class="fl"><span>Annual Maintenance (₹)</span></div><div class="sw"><input type="range" id="ryMaint" min="0" max="200000" step="5000" value="60000" oninput="syncRyMaint('slider');cRy()"><input type="number" id="ryMaintN" value="60000" class="ninput" oninput="cRy()" onchange="syncRyMaint('input');cRy()"></div></div>
+        <div class="field"><div class="fl"><span>Vacancy (months/yr)</span><span class="sv" id="ry-vac-lbl">1 mo</span></div><div class="slw"><input type="range" id="ryVac" min="0" max="6" step="1" value="1" oninput="ss('ryVac','ry-vac-lbl',0,'',false,' mo');cRy()"></div></div>
+      </div>
+      <div>
+        <div class="result-hero"><div class="rh-label">Net Rental Yield</div><div class="rh-val" id="ry-yield">0%</div><div class="rh-sub" id="ry-sub">gross yield</div></div>
+        <div class="metrics"><div class="metric"><div class="mlabel">Annual Rent Income</div><div class="mval green" id="ry-annual">₹0</div></div><div class="metric"><div class="mlabel">Net Annual Income</div><div class="mval blue" id="ry-net">₹0</div></div></div>
+        <div class="info" id="ry-note">Typical metro rental yields range from 2–4%. Good yield is 3%+.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     INSURANCE PAGE
+════════════════════════════════════════════════════════ -->
+<div class="page" id="page-insurance">
+  <div class="sec-title">Insurance Calculator</div>
+  <div class="sec-sub">Estimate the right term life cover and health insurance premium for your life stage and income.</div>
+  <div class="stabs">
+    <button class="stab active" onclick="setInsTab('term',this)">Term Life Cover</button>
+    <button class="stab" onclick="setInsTab('health',this)">Health Premium</button>
+    <button class="stab" onclick="setInsTab('hra',this)">HRA Exemption</button>
+  </div>
+  <div id="ins-term">
+    <div class="g2">
+      <div class="card">
+        <div class="ctitle">Your Profile</div>
+        <div class="field"><div class="fl"><span>Age</span><span class="sv" id="ins-age-lbl">30 yrs</span></div><div class="slw"><input type="range" id="insAge" min="18" max="60" step="1" value="30" oninput="ss('insAge','ins-age-lbl',0,'',false,' yrs');cIns()"></div></div>
+        <div class="field"><div class="fl"><span>Annual Income (₹)</span></div><div class="sw"><input type="range" id="insInc" min="300000" max="20000000" step="100000" value="1200000" oninput="syncInsInc('slider');cIns()"><input type="number" id="insIncN" value="1200000" class="ninput" oninput="cIns()" onchange="syncInsInc('input');cIns()"></div></div>
+        <div class="field"><div class="fl"><span>Outstanding Loans (₹)</span></div><div class="sw"><input type="range" id="insLoan" min="0" max="20000000" step="100000" value="5000000" oninput="syncInsLoan('slider');cIns()"><input type="number" id="insLoanN" value="5000000" class="ninput" oninput="cIns()" onchange="syncInsLoan('input');cIns()"></div></div>
+        <div class="field"><div class="fl"><span>Number of Dependants</span><span class="sv" id="ins-dep-lbl">2</span></div><div class="slw"><input type="range" id="insDep" min="0" max="6" step="1" value="2" oninput="ss('insDep','ins-dep-lbl',0,'',false,'');cIns()"></div></div>
+        <div class="field"><div class="fl"><span>Annual Expenses (₹)</span></div><div class="sw"><input type="range" id="insExp" min="100000" max="5000000" step="50000" value="600000" oninput="syncInsExp('slider');cIns()"><input type="number" id="insExpN" value="600000" class="ninput" oninput="cIns()" onchange="syncInsExp('input');cIns()"></div></div>
+        <div class="field"><div class="fl"><span>Existing Investments (₹)</span></div><div class="sw"><input type="range" id="insInvest" min="0" max="20000000" step="100000" value="500000" oninput="syncInsInvest('slider');cIns()"><input type="number" id="insInvestN" value="500000" class="ninput" oninput="cIns()" onchange="syncInsInvest('input');cIns()"></div></div>
+      </div>
+      <div>
+        <div class="result-hero"><div class="rh-label">Recommended Cover</div><div class="rh-val" id="ins-cover">₹0</div><div class="rh-sub">based on Human Life Value method</div></div>
+        <div class="metrics">
+          <div class="metric"><div class="mlabel">Income Replacement</div><div class="mval blue" id="ins-inc-rep">₹0</div></div>
+          <div class="metric"><div class="mlabel">Loan Liability</div><div class="mval coral" id="ins-loan-cov">₹0</div></div>
+          <div class="metric"><div class="mlabel">Expense Cover</div><div class="mval amber" id="ins-exp-cov">₹0</div></div>
+          <div class="metric"><div class="mlabel">Less: Existing Assets</div><div class="mval green" id="ins-invest-ded">₹0</div></div>
+        </div>
+        <div class="warn">📌 This is an estimate. Actual cover depends on your family's lifestyle, future goals, and existing policies. Consult a financial advisor for personalized advice.</div>
+      </div>
+    </div>
+  </div>
+  <div id="ins-health" style="display:none">
+    <div class="g2">
+      <div class="card">
+        <div class="ctitle">Health Insurance Inputs</div>
+        <div class="field"><div class="fl"><span>Your Age</span><span class="sv" id="hi-age-lbl">30 yrs</span></div><div class="slw"><input type="range" id="hiAge" min="18" max="65" step="1" value="30" oninput="ss('hiAge','hi-age-lbl',0,'',false,' yrs');cHi()"></div></div>
+        <div class="field"><div class="fl"><span>Family Members Covered</span></div><select id="hiType" onchange="cHi()"><option value="self">Self only</option><option value="couple">Self + Spouse</option><option value="family3">Family (3 members)</option><option value="family4" selected>Family (4 members)</option><option value="family5">Family (5 members)</option></select></div>
+        <div class="field"><div class="fl"><span>Sum Insured (₹ Lakh)</span><span class="sv" id="hi-si-lbl">10L</span></div><div class="slw"><input type="range" id="hiSI" min="3" max="100" step="1" value="10" oninput="ss('hiSI','hi-si-lbl',0,'',false,'L');cHi()"></div></div>
+        <div class="field"><div class="fl"><span>City Tier</span></div><select id="hiCity" onchange="cHi()"><option value="metro">Metro (Mumbai/Delhi/Bangalore)</option><option value="t2">Tier-2 city</option><option value="t3">Tier-3/Rural</option></select></div>
+        <div class="field"><div class="fl"><span>Pre-existing Conditions</span></div><select id="hiPec" onchange="cHi()"><option value="none">None</option><option value="bp">Hypertension/BP</option><option value="diabetes">Diabetes</option><option value="both">Both</option></select></div>
+      </div>
+      <div>
+        <div class="result-hero"><div class="rh-label">Estimated Annual Premium</div><div class="rh-val" id="hi-premium">₹0</div><div class="rh-sub" id="hi-sub">indicative range</div></div>
+        <div class="metrics"><div class="metric"><div class="mlabel">Monthly Premium</div><div class="mval blue" id="hi-monthly">₹0</div></div><div class="metric"><div class="mlabel">Sec 80D Deduction</div><div class="mval green" id="hi-80d">₹0</div></div></div>
+        <div class="warn">Premiums are indicative estimates. Actual premiums vary by insurer, your health history, and policy features. Get quotes from 3+ insurers before buying.</div>
+      </div>
+    </div>
+  </div>
+  <div id="ins-hra" style="display:none">
+    <div class="g2">
+      <div class="card">
+        <div class="ctitle">HRA Exemption Calculator</div>
+        <div class="field"><div class="fl"><span>Basic Salary (₹/yr)</span></div><div class="sw"><input type="range" id="hraBasic" min="100000" max="5000000" step="10000" value="600000" oninput="syncHraBasic('slider');cHra()"><input type="number" id="hraBasicN" value="600000" class="ninput" oninput="cHra()" onchange="syncHraBasic('input');cHra()"></div></div>
+        <div class="field"><div class="fl"><span>HRA Received (₹/yr)</span></div><div class="sw"><input type="range" id="hraRec" min="0" max="2000000" step="10000" value="240000" oninput="syncHraRec('slider');cHra()"><input type="number" id="hraRecN" value="240000" class="ninput" oninput="cHra()" onchange="syncHraRec('input');cHra()"></div></div>
+        <div class="field"><div class="fl"><span>Actual Rent Paid (₹/yr)</span></div><div class="sw"><input type="range" id="hraRent" min="0" max="2000000" step="10000" value="300000" oninput="syncHraRent('slider');cHra()"><input type="number" id="hraRentN" value="300000" class="ninput" oninput="cHra()" onchange="syncHraRent('input');cHra()"></div></div>
+        <div class="field"><div class="fl"><span>City</span></div><select id="hraCity" onchange="cHra()"><option value="metro">Metro (Delhi/Mumbai/Kolkata/Chennai)</option><option value="nonmetro">Non-Metro</option></select></div>
+      </div>
+      <div>
+        <div class="result-hero"><div class="rh-label">HRA Exemption Allowed</div><div class="rh-val" id="hra-exempt">₹0</div><div class="rh-sub" id="hra-sub">taxable HRA</div></div>
+        <div class="metrics">
+          <div class="metric"><div class="mlabel">HRA Received</div><div class="mval blue" id="hra-received">₹0</div></div>
+          <div class="metric"><div class="mlabel">50%/40% of Basic</div><div class="mval amber" id="hra-basic-pct">₹0</div></div>
+          <div class="metric"><div class="mlabel">Rent − 10% Basic</div><div class="mval" id="hra-rent-excess">₹0</div></div>
+          <div class="metric"><div class="mlabel">Taxable HRA</div><div class="mval coral" id="hra-taxable">₹0</div></div>
+        </div>
+        <div class="info">HRA exemption = <b>minimum</b> of: (1) HRA received, (2) 50%/40% of basic, (3) Rent paid − 10% of basic. Only applicable under Old Regime.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     BUDGET PLANNER PAGE
+════════════════════════════════════════════════════════ -->
+<div class="page" id="page-budget">
+  <div class="sec-title">Budget Planner</div>
+  <div class="sec-sub">Plan your monthly budget using the 50/30/20 rule. Track needs, wants, and savings allocation.</div>
+  <div class="g2">
+    <div class="card">
+      <div class="ctitle">Monthly Income & Expenses</div>
+      <div class="field">
+        <div class="fl"><span>Monthly Take-home Income (₹)</span></div>
+        <div class="sw"><input type="range" id="bdInc" min="10000" max="1000000" step="5000" value="100000" oninput="syncBdInc('slider');cBd()"><input type="number" id="bdIncN" value="100000" class="ninput" oninput="cBd()" onchange="syncBdInc('input');cBd()"></div>
+      </div>
+      <hr class="divider">
+      <div class="ctitle" style="margin-top:.5rem">Needs (50% ideal)</div>
+      <div class="field"><div class="fl"><span>Rent / EMI (₹)</span></div><input type="number" id="bdRent" value="25000" oninput="cBd()"></div>
+      <div class="field"><div class="fl"><span>Groceries & Food (₹)</span></div><input type="number" id="bdFood" value="8000" oninput="cBd()"></div>
+      <div class="field"><div class="fl"><span>Utilities & Bills (₹)</span></div><input type="number" id="bdUtil" value="5000" oninput="cBd()"></div>
+      <div class="field"><div class="fl"><span>Transport (₹)</span></div><input type="number" id="bdTrans" value="5000" oninput="cBd()"></div>
+      <div class="field"><div class="fl"><span>Insurance Premiums (₹)</span></div><input type="number" id="bdIns" value="3000" oninput="cBd()"></div>
+      <hr class="divider">
+      <div class="ctitle" style="margin-top:.5rem">Wants (30% ideal)</div>
+      <div class="field"><div class="fl"><span>Dining Out / Entertainment (₹)</span></div><input type="number" id="bdEnt" value="5000" oninput="cBd()"></div>
+      <div class="field"><div class="fl"><span>Shopping & Lifestyle (₹)</span></div><input type="number" id="bdShop" value="5000" oninput="cBd()"></div>
+      <div class="field"><div class="fl"><span>Subscriptions (₹)</span></div><input type="number" id="bdSub" value="2000" oninput="cBd()"></div>
+      <div class="field"><div class="fl"><span>Travel & Holidays (₹)</span></div><input type="number" id="bdTravel" value="3000" oninput="cBd()"></div>
+      <hr class="divider">
+      <div class="ctitle" style="margin-top:.5rem">Savings & Investments (20% ideal)</div>
+      <div class="field"><div class="fl"><span>SIP / Investments (₹)</span></div><input type="number" id="bdSip" value="10000" oninput="cBd()"></div>
+      <div class="field"><div class="fl"><span>Emergency Fund (₹)</span></div><input type="number" id="bdEmerg" value="5000" oninput="cBd()"></div>
+      <div class="field"><div class="fl"><span>Other Savings (₹)</span></div><input type="number" id="bdOther" value="2000" oninput="cBd()"></div>
+    </div>
+    <div>
+      <div class="result-hero">
+        <div class="rh-label">Monthly Surplus / Deficit</div>
+        <div class="rh-val" id="bd-surplus">₹0</div>
+        <div class="rh-sub" id="bd-hero-sub">after all expenses</div>
+      </div>
+      <div class="metrics">
+        <div class="metric"><div class="mlabel">Needs</div><div class="mval coral" id="bd-needs">₹0</div></div>
+        <div class="metric"><div class="mlabel">Wants</div><div class="mval amber" id="bd-wants">₹0</div></div>
+        <div class="metric"><div class="mlabel">Savings</div><div class="mval green" id="bd-savings">₹0</div></div>
+        <div class="metric"><div class="mlabel">Savings Rate</div><div class="mval blue" id="bd-rate">0%</div></div>
+      </div>
+      <div class="card">
+        <div class="ctitle">50/30/20 Budget Analysis</div>
+        <div id="bd-bars" style="padding:.4rem 0"></div>
+        <canvas id="bdChart" height="130" style="margin-top:.75rem"></canvas>
+      </div>
+      <div class="card" id="bd-tips">
+        <div class="ctitle">Budget Health Check</div>
+        <div id="bd-tips-rows"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     INFLATION PAGE
+════════════════════════════════════════════════════════ -->
+<div class="page" id="page-inflation">
+  <div class="sec-title">Inflation & Purchasing Power</div>
+  <div class="sec-sub">Understand how inflation erodes money, compare real vs nominal returns, and plan for future costs.</div>
+  <div class="stabs">
+    <button class="stab active" onclick="setInflTab('future',this)">Future Cost</button>
+    <button class="stab" onclick="setInflTab('real',this)">Real Returns</button>
+    <button class="stab" onclick="setInflTab('purchasing',this)">Purchasing Power</button>
+  </div>
+  <div id="infl-future">
+    <div class="g2">
+      <div class="card">
+        <div class="ctitle">Future Cost Calculator</div>
+        <div class="field"><div class="fl"><span>Current Cost / Value (₹)</span></div><div class="sw"><input type="range" id="ifAmt" min="1000" max="50000000" step="1000" value="100000" oninput="syncIfAmt('slider');cInfl()"><input type="number" id="ifAmtN" value="100000" class="ninput" oninput="cInfl()" onchange="syncIfAmt('input');cInfl()"></div></div>
+        <div class="field"><div class="fl"><span>Inflation Rate (%)</span><span class="sv" id="if-rate-lbl">6%</span></div><div class="slw"><input type="range" id="ifRate" min="2" max="12" step="0.5" value="6" oninput="ss('ifRate','if-rate-lbl',1,'',false,'%');cInfl()"></div></div>
+        <div class="field"><div class="fl"><span>Years</span><span class="sv" id="if-yrs-lbl">10 yrs</span></div><div class="slw"><input type="range" id="ifYrs" min="1" max="30" step="1" value="10" oninput="ss('ifYrs','if-yrs-lbl',0,'',false,' yrs');cInfl()"></div></div>
+        <div class="field"><div class="fl"><span>Quick Scenarios</span></div>
+          <div class="scenario-grid" style="margin-top:.5rem">
+            <div class="scenario-card sel" onclick="setInflScenario(100000,6,10,this)"><div class="sc-label">Groceries</div><div class="sc-val">₹1L today</div></div>
+            <div class="scenario-card" onclick="setInflScenario(500000,8,15,this)"><div class="sc-label">Car</div><div class="sc-val">₹5L today</div></div>
+            <div class="scenario-card" onclick="setInflScenario(1000000,7,20,this)"><div class="sc-label">Education</div><div class="sc-val">₹10L today</div></div>
+            <div class="scenario-card" onclick="setInflScenario(10000000,6,25,this)"><div class="sc-label">House</div><div class="sc-val">₹1Cr today</div></div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="result-hero"><div class="rh-label">Future Cost</div><div class="rh-val" id="if-future">₹0</div><div class="rh-sub" id="if-sub">in N years</div></div>
+        <div class="metrics"><div class="metric"><div class="mlabel">Cost Increase</div><div class="mval coral" id="if-increase">₹0</div></div><div class="metric"><div class="mlabel">Multiplier</div><div class="mval blue" id="if-mult">0x</div></div></div>
+        <div class="card"><div class="ctitle">Cost Growth Over Time</div><canvas id="ifChart" height="140"></canvas></div>
+      </div>
+    </div>
+  </div>
+  <div id="infl-real" style="display:none">
+    <div class="g2">
+      <div class="card">
+        <div class="ctitle">Real Return Calculator</div>
+        <div class="field"><div class="fl"><span>Nominal Return (%)</span><span class="sv" id="ir-nom-lbl">12%</span></div><div class="slw"><input type="range" id="irNom" min="1" max="30" step="0.5" value="12" oninput="ss('irNom','ir-nom-lbl',1,'',false,'%');cInflReal()"></div></div>
+        <div class="field"><div class="fl"><span>Inflation Rate (%)</span><span class="sv" id="ir-inf-lbl">6%</span></div><div class="slw"><input type="range" id="irInf" min="2" max="12" step="0.5" value="6" oninput="ss('irInf','ir-inf-lbl',1,'',false,'%');cInflReal()"></div></div>
+        <div class="field"><div class="fl"><span>Investment Amount (₹)</span></div><div class="sw"><input type="range" id="irAmt" min="10000" max="10000000" step="10000" value="100000" oninput="syncIrAmt('slider');cInflReal()"><input type="number" id="irAmtN" value="100000" class="ninput" oninput="cInflReal()" onchange="syncIrAmt('input');cInflReal()"></div></div>
+        <div class="field"><div class="fl"><span>Years</span><span class="sv" id="ir-yrs-lbl">10 yrs</span></div><div class="slw"><input type="range" id="irYrs" min="1" max="30" step="1" value="10" oninput="ss('irYrs','ir-yrs-lbl',0,'',false,' yrs');cInflReal()"></div></div>
+      </div>
+      <div>
+        <div class="result-hero"><div class="rh-label">Real Return</div><div class="rh-val" id="ir-real">0%</div><div class="rh-sub" id="ir-sub">adjusted for inflation</div></div>
+        <div class="metrics"><div class="metric"><div class="mlabel">Nominal Value</div><div class="mval blue" id="ir-nom-val">₹0</div></div><div class="metric"><div class="mlabel">Real Value (today's ₹)</div><div class="mval green" id="ir-real-val">₹0</div></div></div>
+      </div>
+    </div>
+  </div>
+  <div id="infl-purchasing" style="display:none">
+    <div class="g2">
+      <div class="card">
+        <div class="ctitle">Purchasing Power Erosion</div>
+        <div class="field"><div class="fl"><span>Amount (₹)</span></div><div class="sw"><input type="range" id="ppAmt" min="1000" max="10000000" step="1000" value="100000" oninput="syncPpAmt('slider');cPp()"><input type="number" id="ppAmtN" value="100000" class="ninput" oninput="cPp()" onchange="syncPpAmt('input');cPp()"></div></div>
+        <div class="field"><div class="fl"><span>Inflation Rate (%)</span><span class="sv" id="pp-rate-lbl">6%</span></div><div class="slw"><input type="range" id="ppRate" min="2" max="12" step="0.5" value="6" oninput="ss('ppRate','pp-rate-lbl',1,'',false,'%');cPp()"></div></div>
+        <div class="field"><div class="fl"><span>Years</span><span class="sv" id="pp-yrs-lbl">10 yrs</span></div><div class="slw"><input type="range" id="ppYrs" min="1" max="30" step="1" value="10" oninput="ss('ppYrs','pp-yrs-lbl',0,'',false,' yrs');cPp()"></div></div>
+      </div>
+      <div>
+        <div class="result-hero"><div class="rh-label">Purchasing Power After N Years</div><div class="rh-val" id="pp-val">₹0</div><div class="rh-sub" id="pp-sub">of today's ₹1L</div></div>
+        <div class="metrics"><div class="metric"><div class="mlabel">Value Lost</div><div class="mval coral" id="pp-lost">₹0</div></div><div class="metric"><div class="mlabel">% Eroded</div><div class="mval amber" id="pp-pct">0%</div></div></div>
+        <div class="card"><div class="ctitle">Purchasing Power Over Time</div><canvas id="ppChart" height="140"></canvas></div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <footer style="background:var(--navy);color:#94a3b8;text-align:center;padding:1rem 1.5rem;font-size:.76rem;line-height:1.8;margin-top:2rem">
   Built for Indian salaried employees &nbsp;·&nbsp; Free to use &nbsp;·&nbsp; No login required &nbsp;·&nbsp; No data stored<br>
   <span style="color:#64748b">© 2026 ComFinCalc &nbsp;·&nbsp; For simulation and planning purposes only &nbsp;·&nbsp; Not financial advice</span>
