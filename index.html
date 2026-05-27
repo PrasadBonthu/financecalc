@@ -39,6 +39,7 @@ header{background:var(--navy);padding:0 1.25rem;display:flex;align-items:center;
 .g2{display:grid;grid-template-columns:1fr 1fr;gap:1.2rem}
 @media(max-width:760px){.g2{grid-template-columns:1fr}}
 .r2{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
+@media(max-width:480px){.r2{grid-template-columns:1fr}}
 
 /* ── CARDS ──────────────────────────────────────────────────────────────── */
 .card{background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);padding:1.1rem;margin-bottom:1rem}
@@ -115,6 +116,7 @@ tbody td:first-child{text-align:left;color:var(--muted)}
 
 /* ── COMPARISON BOXES ───────────────────────────────────────────────────── */
 .cmp{display:grid;grid-template-columns:1fr 1fr;gap:.9rem;margin-bottom:1rem}
+@media(max-width:480px){.cmp{grid-template-columns:1fr}}
 .box{border:2px solid var(--border);border-radius:var(--radius);padding:1rem;text-align:center;transition:all .2s}
 .box.win{border-color:var(--green);background:#f0fdf4}
 .box-old{border-color:#f59e0b;background:#fffbeb}
@@ -125,6 +127,11 @@ tbody td:first-child{text-align:left;color:var(--muted)}
 .bth{font-size:.9rem;font-weight:700;color:var(--navy);margin-top:2px}
 .bef{font-size:.72rem;font-weight:600;color:var(--coral);margin-top:2px}
 .verd{text-align:center;font-size:.87rem;font-weight:500;color:var(--green);padding:.45rem 0;margin-bottom:.8rem}
+/* Mobile: hide extra columns in 7-col compare table, show only Month/Net(Old)/Net(New) */
+@media(max-width:600px){
+  .mt-compare .col-base,.mt-compare .col-var,.mt-compare .col-taxo,.mt-compare .col-taxn{display:none}
+  .mt-compare thead th:nth-child(1){text-align:left}
+}
 
 /* ── SLAB / BREAKDOWN ROWS ──────────────────────────────────────────────── */
 .sg{display:grid;gap:4px}
@@ -923,7 +930,7 @@ tbody td:first-child{text-align:left;color:var(--muted)}
      TAX SUB-PAGE: NEW vs OLD COMPARISON
 ══════════════════════════════════════════════ -->
 <div class="tax-sub-page" id="taxpage-compare">
-<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;margin-bottom:.2rem">
+<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;margin-bottom:.2rem;flex-wrap:wrap">
   <h1 style="margin-bottom:0">⚖️ New vs Old Regime <span style="font-size:.9rem;font-weight:400;color:var(--muted)">India — FY 2025-26</span></h1>
   <button onclick="resetAll()" title="Clear all text fields to start fresh" style="font-family:var(--fb);font-size:.78rem;font-weight:600;padding:7px 16px;border-radius:8px;border:1.5px solid var(--coral);background:#fff;color:var(--coral);cursor:pointer;white-space:nowrap;flex-shrink:0;transition:all .15s;margin-top:4px" onmouseover="this.style.background='var(--coral)';this.style.color='#fff'" onmouseout="this.style.background='#fff';this.style.color='var(--coral)'">🔄 Reset</button>
 </div>
@@ -1196,12 +1203,31 @@ tbody td:first-child{text-align:left;color:var(--muted)}
 </div>
 
 <div class="card">
-  <div class="ct">Month-wise Take-Home — Full Year <span style="font-size:.68rem;font-weight:400;color:var(--amber)"> &nbsp;🟡 = variable pay month</span><span style="font-size:.68rem;font-weight:400;color:var(--green)"> &nbsp;📍 = current month</span></div>
+  <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.4rem;margin-bottom:.6rem">
+    <div class="ct" style="margin-bottom:0">Month-wise Take-Home — Full Year <span style="font-size:.68rem;font-weight:400;color:var(--amber)"> &nbsp;🟡 = variable pay month</span><span style="font-size:.68rem;font-weight:400;color:var(--green)"> &nbsp;📍 = current month</span></div>
+    <button id="mt-expand-btn" onclick="toggleMtColumns()" style="display:none;font-size:.72rem;font-weight:600;padding:4px 10px;border-radius:6px;border:1px solid var(--border);background:var(--bg);color:var(--muted);cursor:pointer">Show all</button>
+  </div>
   <div style="overflow-x:auto">
-    <table class="mt">
-      <thead><tr><th>Month</th><th>Base Gross</th><th>Variable</th><th>Tax(Old)</th><th>Net(Old)</th><th>Tax(New)</th><th>Net(New)</th></tr></thead>
+    <table class="mt mt-compare">
+      <thead><tr>
+        <th>Month</th>
+        <th class="col-base">Base Gross</th>
+        <th class="col-var">Variable</th>
+        <th class="col-taxo">Tax(Old)</th>
+        <th>Net(Old)</th>
+        <th class="col-taxn">Tax(New)</th>
+        <th>Net(New)</th>
+      </tr></thead>
       <tbody id="mtbody"></tbody>
-      <tfoot><tr><td>Full Year</td><td id="ftb"></td><td id="ftv"></td><td id="ftot"></td><td id="fton"></td><td id="ftnt"></td><td id="ftnn"></td></tr></tfoot>
+      <tfoot><tr>
+        <td>Full Year</td>
+        <td class="col-base" id="ftb"></td>
+        <td class="col-var" id="ftv"></td>
+        <td class="col-taxo" id="ftot"></td>
+        <td id="fton"></td>
+        <td class="col-taxn" id="ftnt"></td>
+        <td id="ftnn"></td>
+      </tr></tfoot>
     </table>
   </div>
 </div>
@@ -1248,7 +1274,23 @@ function showPage(id,btn){
   else subtabs.classList.add('hidden');
 }
 
-// ── TAX SUB-TAB NAVIGATION ───────────────────────────────────────────────────
+// ── MOBILE: toggle extra columns in compare month table ───────────────────────
+let _mtExpanded=false;
+function toggleMtColumns(){
+  _mtExpanded=!_mtExpanded;
+  const btn=document.getElementById('mt-expand-btn');
+  document.querySelectorAll('.mt-compare .col-base,.mt-compare .col-var,.mt-compare .col-taxo,.mt-compare .col-taxn').forEach(el=>{
+    el.style.display=_mtExpanded?'':'none';
+  });
+  if(btn) btn.textContent=_mtExpanded?'Collapse':'Show all';
+}
+// On resize, reset expand state and button visibility
+window.addEventListener('resize',()=>{
+  const btn=document.getElementById('mt-expand-btn');
+  if(!btn) return;
+  if(window.innerWidth>600){btn.style.display='none';_mtExpanded=false;document.querySelectorAll('.mt-compare .col-base,.mt-compare .col-var,.mt-compare .col-taxo,.mt-compare .col-taxn').forEach(el=>el.style.display='');}
+  else btn.style.display='block';
+});
 function showTaxTab(tab, btn){
   document.querySelectorAll('.tax-sub-page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.tstab').forEach(b=>b.classList.remove('active'));
@@ -1764,10 +1806,16 @@ function calc(){
   });
   const moGrossWithShift = moGross + shiftMoAmt;
   document.getElementById('mtbody').innerHTML=mrows.map(r=>`
-    <tr${r.isV?' class="vm"':r.mo===_curMo?' class="cur-mo"':''}><td>${r.mo}${r.isV?' ★':''}${r.mo===_curMo?' 📍':''}</td><td>${fmt(r.moG+shiftMoAmt)}</td>
-    <td>${r.add>0?fmt(r.add):'—'}</td>
-    <td style="color:var(--coral)">${fmt(r.oTax)}</td><td style="color:var(--green);font-weight:500">${fmt(r.oNet)}</td>
-    <td style="color:var(--coral)">${fmt(r.nTax)}</td><td style="color:var(--green);font-weight:500">${fmt(r.nNet)}</td></tr>`).join('');
+    <tr${r.isV?' class="vm"':r.mo===_curMo?' class="cur-mo"':''}><td>${r.mo}${r.isV?' ★':''}${r.mo===_curMo?' 📍':''}</td>
+    <td class="col-base">${fmt(r.moG+shiftMoAmt)}</td>
+    <td class="col-var">${r.add>0?fmt(r.add):'—'}</td>
+    <td class="col-taxo" style="color:var(--coral)">${fmt(r.oTax)}</td>
+    <td style="color:var(--green);font-weight:500">${fmt(r.oNet)}</td>
+    <td class="col-taxn" style="color:var(--coral)">${fmt(r.nTax)}</td>
+    <td style="color:var(--green);font-weight:500">${fmt(r.nNet)}</td></tr>`).join('');
+  // Show expand button only on narrow screens
+  const expandBtn=document.getElementById('mt-expand-btn');
+  if(expandBtn) expandBtn.style.display=window.innerWidth<=600?'block':'none';
   document.getElementById('ftb').textContent=fmt(grossSal);
   document.getElementById('ftv').textContent=totalVar>0?fmt(totalVar):'—';
   document.getElementById('ftot').textContent=fmt(oF.total);
