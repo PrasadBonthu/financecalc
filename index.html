@@ -50,8 +50,8 @@ header{background:var(--navy);padding:0 1.25rem;display:flex;align-items:center;
 .field:last-child{margin-bottom:0}
 .fl{display:flex;justify-content:space-between;align-items:center;font-size:.73rem;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:5px}
 .fl .cv{font-weight:700;color:var(--blue);font-size:.76rem;text-transform:none;letter-spacing:0}
-.field input,.field select{width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:8px;font-family:var(--fb);font-size:.93rem;color:var(--text);background:#fafafa;outline:none;transition:border-color .15s}
-.field input:focus,.field select:focus{border-color:var(--blue);background:#fff}
+.field input,.field select{width:100%;padding:9px 12px;border:1.5px solid #fbbf24;border-radius:8px;font-family:var(--fb);font-size:.93rem;color:var(--text);background:#fffbeb;outline:none;transition:border-color .15s,background .15s}
+.field input:focus,.field select:focus{border-color:#f59e0b;background:#fef3c7;box-shadow:0 0 0 3px rgba(251,191,36,.18)}
 .au{background:#f0fdf4!important;border-color:#a7f3d0!important;color:var(--green)!important;font-weight:600!important}
 
 /* ── SLIDERS ────────────────────────────────────────────────────────────── */
@@ -63,8 +63,8 @@ header{background:var(--navy);padding:0 1.25rem;display:flex;align-items:center;
 .sw{display:flex;align-items:center;gap:8px}
 .sw input[type=range]{flex:1;-webkit-appearance:none;height:4px;background:var(--border);border-radius:2px;border:none;padding:0;cursor:pointer;min-width:0}
 .sw input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:17px;height:17px;border-radius:50%;background:var(--blue);border:2px solid #fff;box-shadow:0 0 0 2px var(--blue)}
-.sw .ninput{width:110px;flex:none;font-size:.85rem;padding:6px 8px;border:1.5px solid var(--border);border-radius:8px;font-family:var(--fb);background:#fafafa;color:var(--text)}
-.sw .ninput:focus{border-color:var(--blue);background:#fff;outline:none}
+.sw .ninput{width:110px;flex:none;font-size:.85rem;padding:6px 8px;border:1.5px solid #fbbf24;border-radius:8px;font-family:var(--fb);background:#fffbeb;color:var(--text)}
+.sw .ninput:focus{border-color:#f59e0b;background:#fef3c7;outline:none;box-shadow:0 0 0 3px rgba(251,191,36,.18)}
 .sw .unit{font-size:.84rem;color:var(--muted);white-space:nowrap}
 .sub-hint{font-size:.73rem;color:var(--muted);margin-top:3px}
 .market-tag{font-size:.72rem;font-weight:600;color:var(--green)}
@@ -206,8 +206,8 @@ tbody td:first-child{text-align:left;color:var(--muted)}
 .f{margin-bottom:.9rem}.f:last-child{margin-bottom:0}
 .fl{display:flex;justify-content:space-between;align-items:center;font-size:.73rem;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:5px}
 .fl .cv{font-weight:700;color:var(--blue);font-size:.76rem;text-transform:none;letter-spacing:0}
-.f input,.f select{width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:8px;font-family:var(--fb);font-size:.93rem;color:var(--text);background:#fafafa;outline:none;transition:border-color .15s}
-.f input:focus,.f select:focus{border-color:var(--blue);background:#fff}
+.f input,.f select{width:100%;padding:9px 12px;border:1.5px solid #fbbf24;border-radius:8px;font-family:var(--fb);font-size:.93rem;color:var(--text);background:#fffbeb;outline:none;transition:border-color .15s,background .15s}
+.f input:focus,.f select:focus{border-color:#f59e0b;background:#fef3c7;box-shadow:0 0 0 3px rgba(251,191,36,.18)}
 .au{background:#f0fdf4!important;border-color:#a7f3d0!important;color:var(--green)!important;font-weight:600!important}
 /* .ct = card title (plain, no colour) */
 .ct{font-family:var(--fh);font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:.9rem}
@@ -1666,21 +1666,23 @@ function calc(){
   const profTax  = 200;
   const baseTaxO = oB.total;
   const baseTaxN = nB.total;
-  const baseOTH  = Math.round((grossSal-pfEmpAnn-foodAnn-npsErAnn-baseTaxO)/12);
-  const baseNTH  = Math.round((grossSal-pfEmpAnn-foodAnn-npsErAnn-baseTaxN)/12);
-
-  const moGross=Math.round(grossSal/12);
-  const oTH=Math.round((grossSal-pfEmpAnn-foodAnn-npsErAnn-oF.total)/12);
-  const nTH=Math.round((grossSal-pfEmpAnn-foodAnn-npsErAnn-nF.total)/12);
+  // Use floor-based monthly split (same logic as monthly table) to avoid ±₹1 mismatch
+  const moGross      = Math.floor(grossSal/12);
+  const baseNetO_ann = grossSal-pfEmpAnn-foodAnn-npsErAnn-baseTaxO-profTax*12;
+  const baseNetN_ann = grossSal-pfEmpAnn-foodAnn-npsErAnn-baseTaxN-profTax*12;
+  const baseOTH      = Math.floor(baseNetO_ann/12);
+  const baseNTH      = Math.floor(baseNetN_ann/12);
+  const oTH=Math.floor((grossSal-pfEmpAnn-foodAnn-npsErAnn-oF.total)/12);
+  const nTH=Math.floor((grossSal-pfEmpAnn-foodAnn-npsErAnn-nF.total)/12);
 
   // Boxes
   const win=oF.total<=nF.total?'old':'new';
   const save=Math.abs(oF.total-nF.total);
   document.getElementById('rot').textContent=fmt(oF.total);
-  document.getElementById('roth').textContent=fmt(baseOTH-profTax)+'/mo (base)';
+  document.getElementById('roth').textContent=fmt(baseOTH)+'/mo (base)';
   document.getElementById('roe').textContent=grossSal>0?pc(oF.total/(grossSal+totalVar)*100)+' effective':'';
   document.getElementById('rnt').textContent=fmt(nF.total);
-  document.getElementById('rnth').textContent=fmt(baseNTH-profTax)+'/mo (base)';
+  document.getElementById('rnth').textContent=fmt(baseNTH)+'/mo (base)';
   document.getElementById('rne').textContent=grossSal>0?pc(nF.total/(grossSal+totalVar)*100)+' effective':'';
   ['oldbox','newbox'].forEach(id=>document.getElementById(id).classList.remove('win'));
   document.getElementById(win==='old'?'oldbox':'newbox').classList.add('win');
@@ -1707,11 +1709,12 @@ function calc(){
   function ihDiv(){ return '<div class="ih-div"></div>'; }
 
   function buildIH(regime, baseTax, th){
-    const moBasic = Math.round(basic/12);
-    const moShift = shiftMoAmt;  // shift every month
-    const moHRA   = Math.round(hra/12);
-    const moSpl   = Math.round(spl/12);
-    const moConv  = Math.round(conv/12);
+    const moBasic = Math.floor(basic/12);
+    const moShift = shiftMoAmt;
+    const moHRA   = Math.floor(hra/12);
+    const moSpl   = Math.floor(spl/12);
+    const moConv  = Math.floor(conv/12);
+    // th already has profTax baked in (baseOTH/baseNTH computed net of profTax*12)
     return [
       `<div class="rb-title">${regime==='old'?'🟡 Old Regime — Regular Month':'🟢 New Regime — Regular Month'}</div>`,
       `<div style="font-size:.72rem;color:var(--muted);margin-bottom:.4rem">(Base salary only — variable pay months shown in table below)</div>`,
@@ -1724,10 +1727,10 @@ function calc(){
       ihRow('Employee PF (12%)','- '+fmt(pfEmpMo),'co'),
       npsErMo>0?ihRow(`Employer NPS (${npsPct}%)`,'- '+fmt(npsErMo),'co'):'',
       foodMo>0?ihRow('Food Coupons (non-cash)','- '+fmt(foodMo),'co'):'',
-      ihRow('Income Tax (TDS)','- '+fmt(Math.round(baseTax/12)),'co'),
+      ihRow('Income Tax (TDS)','- '+fmt(Math.floor(baseTax/12)),'co'),
       ihRow('Professional Tax','- '+fmt(profTax),'co'),
       ihDiv(),
-      `<div class="ih-row"><span class="ih-lbl" style="font-weight:700;color:var(--navy)">💰 Net Pay to Bank</span><span class="ih-val net">${fmt(th-profTax)}</span></div>`,
+      `<div class="ih-row"><span class="ih-lbl" style="font-weight:700;color:var(--navy)">💰 Net Pay to Bank</span><span class="ih-val net">${fmt(th)}</span></div>`,
     ].filter(Boolean).join('');
   }
 
@@ -1742,22 +1745,26 @@ function calc(){
   const _now    = new Date();
   const _calMos = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
   const _curMo  = _calMos[_now.getMonth()];  // e.g. 'May'
-  const mrows=MONTHS.map(mo=>{
+  // Fix rounding: distribute grossSal exactly across 12 months to avoid ±₹1–11 drift
+  const moGrossBase = Math.floor(grossSal / 12);
+  const moGrossRem  = grossSal - moGrossBase * 12; // extra rupees spread to first N months
+  const mrows=MONTHS.map((mo,idx)=>{
     const vA        = varMos.includes(mo)?varPP:0;
     const pA        = premMos.includes(mo)?premPP:0;
     const leaveAdd  = (leaveDays>0 && mo===leaveMo) ? leaveAmt : 0;
     const add       = vA+pA+leaveAdd;
     const isV       = add>0;
-    const vShare=totalVar>0?add/totalVar:0;
-    const oTax=Math.round(oB.total/12)+(isV?Math.round((oF.total-oB.total)*vShare):0);
-    const nTax=Math.round(nB.total/12)+(isV?Math.round((nF.total-nB.total)*vShare):0);
-    const oNet=moGross+add-pfEmpMo-foodMo-npsErMo-oTax;
-    const nNet=moGross+add-pfEmpMo-foodMo-npsErMo-nTax;
-    return{mo,add,oTax,nTax,oNet,nNet,isV};
+    const moG       = moGrossBase + (idx < moGrossRem ? 1 : 0); // exact annual sum
+    const vShare    = totalVar>0?add/totalVar:0;
+    const oTax      = Math.round(oB.total/12)+(isV?Math.round((oF.total-oB.total)*vShare):0);
+    const nTax      = Math.round(nB.total/12)+(isV?Math.round((nF.total-nB.total)*vShare):0);
+    const oNet      = moG+add-pfEmpMo-foodMo-npsErMo-oTax-profTax;
+    const nNet      = moG+add-pfEmpMo-foodMo-npsErMo-nTax-profTax;
+    return{mo,add,moG,oTax,nTax,oNet,nNet,isV};
   });
   const moGrossWithShift = moGross + shiftMoAmt;
   document.getElementById('mtbody').innerHTML=mrows.map(r=>`
-    <tr${r.isV?' class="vm"':r.mo===_curMo?' class="cur-mo"':''}><td>${r.mo}${r.isV?' ★':''}${r.mo===_curMo?' 📍':''}</td><td>${fmt(moGrossWithShift)}</td>
+    <tr${r.isV?' class="vm"':r.mo===_curMo?' class="cur-mo"':''}><td>${r.mo}${r.isV?' ★':''}${r.mo===_curMo?' 📍':''}</td><td>${fmt(r.moG+shiftMoAmt)}</td>
     <td>${r.add>0?fmt(r.add):'—'}</td>
     <td style="color:var(--coral)">${fmt(r.oTax)}</td><td style="color:var(--green);font-weight:500">${fmt(r.oNet)}</td>
     <td style="color:var(--coral)">${fmt(r.nTax)}</td><td style="color:var(--green);font-weight:500">${fmt(r.nNet)}</td></tr>`).join('');
