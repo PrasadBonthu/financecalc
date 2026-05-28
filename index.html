@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>ComFinCalc — Plan better. Save more.</title>
+<title>ComFinCalc — Free Indian Salary & Finance Calculator</title>
 <meta name="description" content="Free Indian salary calculator — Income Tax New vs Old Regime, SIP, Loans, Retirement, Budget, Real Estate and more. FY 2025-26.">
 <!-- Google Analytics 4 -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-1STRNBRX9V"></script>
@@ -34,12 +34,18 @@
 body{font-family:var(--fb);background:var(--bg);color:var(--text);min-height:100vh;line-height:1.6}
 
 /* ── HEADER & NAV ───────────────────────────────────────────────────────── */
-header{background:var(--navy);padding:0 1.25rem;display:flex;align-items:center;justify-content:space-between;height:56px;position:sticky;top:0;z-index:200}
+header{background:var(--navy);padding:0 1.25rem;display:flex;align-items:center;justify-content:space-between;height:64px;position:sticky;top:0;z-index:200;gap:1rem}
 .logo{font-family:var(--fh);font-size:1.25rem;font-weight:700;color:#fff;letter-spacing:-.5px;white-space:nowrap}
 .logo span{color:var(--blue-mid)}
-.tagline{font-size:.68rem;color:#94a3b8;letter-spacing:.06em;text-transform:uppercase;display:none}
-@media(min-width:500px){.tagline{display:block}}
-.topnav{background:var(--navy2);display:flex;overflow-x:auto;scrollbar-width:none;border-bottom:2px solid rgba(255,255,255,.06);position:sticky;top:56px;z-index:190}
+.tagline{font-size:.68rem;color:#94a3b8;letter-spacing:.02em;margin-top:3px;white-space:nowrap}
+.hdr-left{display:flex;flex-direction:column;justify-content:center;min-width:0}
+.hdr-right{display:flex;align-items:center;gap:5px;flex-shrink:0}
+.hdr-badge{font-size:.68rem;font-weight:600;padding:2px 7px;border-radius:10px;white-space:nowrap}
+.hdr-sep{width:1px;height:16px;background:rgba(255,255,255,.2);flex-shrink:0;margin:0 2px}
+.hdr-share{font-size:.68rem;font-weight:700;padding:3px 10px;border-radius:10px;background:#1a56db;color:#fff;border:none;cursor:pointer;white-space:nowrap;transition:background .15s;letter-spacing:.02em}
+.hdr-share:hover{background:#1648c0}
+@media(max-width:520px){.hdr-badge{display:none}.hdr-sep{display:none}}
+.topnav{background:var(--navy2);display:flex;overflow-x:auto;scrollbar-width:none;border-bottom:2px solid rgba(255,255,255,.06);position:sticky;top:64px;z-index:190}
 .topnav::-webkit-scrollbar{display:none}
 .tnav-btn{font-family:var(--fb);font-size:.75rem;font-weight:600;color:#94a3b8;background:none;border:none;padding:0 1.2rem;height:46px;cursor:pointer;white-space:nowrap;border-bottom:2.5px solid transparent;transition:color .15s,border-color .15s;text-transform:uppercase;letter-spacing:.06em;flex-shrink:0;display:flex;align-items:center;gap:6px}
 .tnav-btn:hover{color:#e2e8f0}
@@ -295,13 +301,22 @@ tbody td:first-child{text-align:left;color:var(--muted)}
 <body>
 
 <header>
-  <div class="logo">Com<span>Fin</span>Calc <span style="font-size:.65rem;font-weight:400;color:#64748b;margin-left:5px">India</span></div>
-  <div class="tagline">Plan better. Save more.</div>
+  <div class="hdr-left">
+    <div class="logo">Com<span>Fin</span>Calc <span style="font-size:.65rem;font-weight:400;color:#64748b;margin-left:5px">India</span></div>
+    <div class="tagline">Made in 🇮🇳 by a tax payer, for tax payers</div>
+  </div>
+  <div class="hdr-right">
+    <span class="hdr-badge" style="background:#14532d;color:#4ade80">Free</span>
+    <span class="hdr-badge" style="background:#1e3a5f;color:#60a5fa">No login</span>
+    <span class="hdr-badge" style="background:#3b1f5e;color:#c084fc">FY 2025-26</span>
+    <div class="hdr-sep"></div>
+    <button class="hdr-share" onclick="shareApp()">↗ Share</button>
+  </div>
 </header>
 
 <div class="topnav">
   <button class="tnav-btn" onclick="showPage('loans',this)">🏦 Loans</button>
-  <button class="tnav-btn active" onclick="showPage('tax',this)">📋 Income Tax</button>
+  <button class="tnav-btn active" onclick="showPage('tax',this)">📋 Income Tax ⭐</button>
   <button class="tnav-btn" onclick="showPage('savings',this)">🏛️ Savings</button>
   <button class="tnav-btn" onclick="showPage('sip',this)">📈 SIP / MF</button>
   <button class="tnav-btn" onclick="showPage('retire',this)">🌅 Retirement</button>
@@ -1459,6 +1474,7 @@ function syncLTen(src){
 function setLT(t,btn){
   _lType=t;
   document.querySelectorAll('#page-loans .stab').forEach(b=>b.classList.remove('active'));btn.classList.add('active');
+  if(typeof gtag!=='undefined') gtag('event','loan_type',{type:t});
   const cfg=LOAN_CFG[t];
   // Update slider ranges
   const amtEl=document.getElementById('lAmt');
@@ -1752,6 +1768,15 @@ function calc(){
   document.getElementById('verd').textContent=save<500
     ?'⚖️ Both nearly equal — prefer New (simpler filing).'
     :`✅ ${win==='old'?'Old':'New'} Regime saves ${fmt(save)}/yr  (${fmt(Math.round(save/12))}/mo)`;
+  // GA4 — regime winner + CTC range (debounced to avoid firing on every keystroke)
+  clearTimeout(window._calcGaTimer);
+  window._calcGaTimer=setTimeout(()=>{
+    if(typeof gtag==='undefined'||grossSal<=0) return;
+    const ctcTotal=grossSal+totalVar;
+    const ctcRange=ctcTotal<600000?'below-6L':ctcTotal<1200000?'6-12L':ctcTotal<2500000?'12-25L':ctcTotal<5000000?'25-50L':'above-50L';
+    gtag('event','tax_calc_run',{regime:win,ctc_range:ctcRange});
+    gtag('event','regime_winner',{winner:win,saving_range:save<10000?'below-10k':save<50000?'10-50k':save<100000?'50-100k':'above-100k'});
+  },1500);
 
   // Variable summary
   const vTaxO=oF.total-oB.total, vTaxN=nF.total-nB.total;
@@ -2458,8 +2483,32 @@ function cPp(){
   mkC('ppChart','line',{labels,datasets:[{label:'Purchasing Power',data,borderColor:'#d97706',backgroundColor:'rgba(217,119,6,.1)',fill:true,tension:.3,pointRadius:0}]},{scales:{x:{grid:{display:false},ticks:{font:{size:8}}},y:{ticks:{callback:v=>fS(v),font:{size:9}}}}});
 }
 
+// ── SHARE ─────────────────────────────────────────────────────────────────────
+function shareApp(source='header'){
+  const url='https://comfincalc.com';
+  const text='🇮🇳 ComFinCalc — Free Indian salary & finance calculator. New vs Old tax regime, SIP, Loans, Retirement & more. No login needed!\n\n'+url;
+  if(navigator.share){
+    if(typeof gtag!=='undefined') gtag('event','share_click',{source,method:'native'});
+    navigator.share({title:'ComFinCalc',text:'Free Indian salary & finance calculator',url});
+  } else if(navigator.clipboard){
+    if(typeof gtag!=='undefined') gtag('event','share_click',{source,method:'copy'});
+    navigator.clipboard.writeText(url).then(()=>{
+      const btn=source==='footer'?document.querySelector('.footer-share'):document.querySelector('.hdr-share');
+      if(btn){const orig=btn.textContent;btn.textContent='✓ Copied!';btn.style.background='#059669';setTimeout(()=>{btn.textContent=orig;btn.style.background='';},2000);}
+    });
+  } else {
+    if(typeof gtag!=='undefined') gtag('event','share_click',{source,method:'whatsapp'});
+    window.open('https://wa.me/?text='+encodeURIComponent(text),'_blank');
+  }
+}
+
 // ── INIT ──────────────────────────────────────────────────────────────────────
 function resetAll(){
+  if(typeof gtag!=='undefined'){
+    const activeTax=document.querySelector('.tstab.active');
+    const regime=activeTax?activeTax.id.replace('tstab-',''):'compare';
+    gtag('event','reset_click',{tab:regime});
+  }
   // Reset master hidden fields
   document.getElementById('basic').value = 150000;
   const zeroIds = ['fixedAT','varP','premB','mobile','leavedays','shiftmo',
@@ -3093,9 +3142,41 @@ document.addEventListener('DOMContentLoaded', () => {
   </div>
 </div>
 
-<footer style="background:var(--navy);color:#94a3b8;text-align:center;padding:1rem 1.5rem;font-size:.76rem;line-height:1.8;margin-top:2rem">
-  Built for Indian salaried employees &nbsp;·&nbsp; Free to use &nbsp;·&nbsp; No login required &nbsp;·&nbsp; No data stored<br>
-  <span style="color:#64748b">© 2026 ComFinCalc &nbsp;·&nbsp; For simulation and planning purposes only &nbsp;·&nbsp; Not financial advice</span>
+<footer style="background:var(--navy);color:#94a3b8;text-align:center;padding:1.1rem 1.5rem .9rem;font-size:.76rem;line-height:1.8;margin-top:2rem">
+  <div style="margin-bottom:.7rem">
+    <button onclick="shareApp('footer')" class="footer-share" style="font-size:.72rem;font-weight:700;padding:4px 14px;border-radius:10px;background:#1a56db;color:#fff;border:none;cursor:pointer;transition:background .15s" onmouseover="this.style.background='#1648c0'" onmouseout="this.style.background='#1a56db'">↗ Share comfincalc.com</button>
+  </div>
+  <div style="color:#475569;font-size:.7rem;margin-bottom:.35rem">
+    🇮🇳 Made by a tax payer &nbsp;·&nbsp; Built for Indian salaried employees &nbsp;·&nbsp; Free to use &nbsp;·&nbsp; No login &nbsp;·&nbsp; No data stored
+  </div>
+  <span style="color:#334155;font-size:.68rem">© <span id="footer-year"></span> ComFinCalc &nbsp;·&nbsp; For simulation and planning purposes only &nbsp;·&nbsp; Not financial advice</span>
 </footer>
+
+<!-- Sticky go-to-top button -->
+<button id="go-top-btn" onclick="window.scrollTo({top:0,behavior:'smooth'});if(typeof gtag!=='undefined')gtag('event','go_top_click');" title="Back to top"
+  style="position:fixed;bottom:24px;right:20px;width:40px;height:40px;border-radius:50%;background:#1a56db;color:#fff;border:none;cursor:pointer;font-size:1.1rem;display:none;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(26,86,219,.45);z-index:999;transition:opacity .2s,transform .2s">↑</button>
+
+<script>
+// Footer year auto-update
+document.getElementById('footer-year').textContent=new Date().getFullYear();
+// Show/hide go-to-top button + scroll depth tracking
+const _scrollDepthFired=new Set();
+window.addEventListener('scroll',()=>{
+  const btn=document.getElementById('go-top-btn');
+  if(window.scrollY>300){btn.style.display='flex';}
+  else{btn.style.display='none';}
+  // Scroll depth milestones
+  if(typeof gtag!=='undefined'){
+    const pct=Math.round((window.scrollY+window.innerHeight)/document.body.scrollHeight*100);
+    [25,50,75,90].forEach(m=>{
+      if(pct>=m&&!_scrollDepthFired.has(m)){
+        _scrollDepthFired.add(m);
+        gtag('event','scroll',{percent:m});
+      }
+    });
+  }
+});
+</script>
+
 </body>
 </html>
