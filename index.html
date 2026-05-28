@@ -4,6 +4,23 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>ComFinCalc — Plan better. Save more.</title>
+<meta name="description" content="Free Indian salary calculator — Income Tax New vs Old Regime, SIP, Loans, Retirement, Budget, Real Estate and more. FY 2025-26.">
+<!-- Google Analytics 4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-1STRNBRX9V"></script>
+<script>
+  window.dataLayer=window.dataLayer||[];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js',new Date());
+  gtag('config','G-1STRNBRX9V');
+</script>
+<!-- Microsoft Clarity -->
+<script type="text/javascript">
+  (function(c,l,a,r,i,t,y){
+    c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+    t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+    y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+  })(window,document,"clarity","script","wy6tgcs7r9");
+</script>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700&family=DM+Sans:opsz,wght@9..40,400;9..40,500&display=swap" rel="stylesheet">
 <style>
 /* ── RESET & TOKENS ─────────────────────────────────────────────────────── */
@@ -1272,6 +1289,8 @@ function showPage(id,btn){
   const subtabs=document.getElementById('tax-subtabs');
   if(id==='tax') subtabs.classList.remove('hidden');
   else subtabs.classList.add('hidden');
+  // GA4 tracking
+  if(typeof gtag!=='undefined') gtag('event','tab_open',{tab_name:id});
 }
 
 // ── MOBILE: toggle extra columns in compare month table ───────────────────────
@@ -1297,6 +1316,8 @@ function showTaxTab(tab, btn){
   document.getElementById('taxpage-'+tab).classList.add('active');
   btn.classList.add('active');
   calc(); // recalculate for the newly visible tab
+  // GA4 tracking
+  if(typeof gtag!=='undefined') gtag('event','tax_tab_open',{regime:tab});
 }
 
 // ── SHARED STATE & SYNC ──────────────────────────────────────────────────────
@@ -1993,6 +2014,7 @@ function updateTabDisplays(){
 
 // ── NEW MODULE NAVIGATION ─────────────────────────────────────────────────────
 function setSavTab(t,btn){document.querySelectorAll('#page-savings .stab').forEach(b=>b.classList.remove('active'));btn.classList.add('active');_savTab=t;
+  if(typeof gtag!=='undefined') gtag('event','subtab_open',{module:'savings',subtab:t});
   const isFd=t==='fd',isRd=t==='rd',isPpf=t==='ppf',isNsc=t==='nsc',isSsa=t==='ssa';
   document.getElementById('sav-principal-wrap').style.display=(isRd)?'none':'block';
   document.getElementById('sav-monthly-wrap').style.display=(isRd)?'block':'none';
@@ -2060,6 +2082,7 @@ function cSav(){
 // ── SIP ─────────────────────────────────────────────────────────────────────
 let _sipTab='sip';
 function setSipTab(t,btn){document.querySelectorAll('#page-sip .stab').forEach(b=>b.classList.remove('active'));btn.classList.add('active');_sipTab=t;
+  if(typeof gtag!=='undefined') gtag('event','subtab_open',{module:'sip',subtab:t});
   document.getElementById('sip-monthly-wrap').style.display=(t==='sip'||t==='elss')?'block':'none';
   document.getElementById('sip-lump-wrap').style.display=(t==='lump')?'block':'none';
   document.getElementById('sip-goal-wrap').style.display=(t==='goal')?'block':'none';
@@ -2132,6 +2155,7 @@ function cSip(){
 // ── RETIREMENT ───────────────────────────────────────────────────────────────
 let _retTab='corpus';
 function setRetTab(t,btn){document.querySelectorAll('#page-retire .stab').forEach(b=>b.classList.remove('active'));btn.classList.add('active');_retTab=t;
+  if(typeof gtag!=='undefined') gtag('event','subtab_open',{module:'retirement',subtab:t});
   document.getElementById('ret-nps-fields').style.display=(t==='nps')?'block':'none';
   document.getElementById('ret-nps-summary').style.display=(t==='nps')?'block':'none';
   document.getElementById('ret-retire-age-wrap').style.display=(t==='early')?'none':'block';
@@ -2197,6 +2221,7 @@ function cRet(){
 // ── REAL ESTATE ──────────────────────────────────────────────────────────────
 let _realTab='buyvrent';
 function setRealTab(t,btn){document.querySelectorAll('#page-realty .stab').forEach(b=>b.classList.remove('active'));btn.classList.add('active');_realTab=t;
+  if(typeof gtag!=='undefined') gtag('event','subtab_open',{module:'realestate',subtab:t});
   ['buyvrent','appreciation','stampduty','rentalyield'].forEach(s=>document.getElementById('real-'+s).style.display='none');
   document.getElementById('real-'+t).style.display='block';
   if(t==='buyvrent')cReal();else if(t==='appreciation')cAp();else if(t==='stampduty')cSd();else cRy();
@@ -2286,6 +2311,7 @@ function cRy(){
 // ── INSURANCE ────────────────────────────────────────────────────────────────
 let _insTab='term';
 function setInsTab(t,btn){document.querySelectorAll('#page-insurance .stab').forEach(b=>b.classList.remove('active'));btn.classList.add('active');_insTab=t;
+  if(typeof gtag!=='undefined') gtag('event','subtab_open',{module:'insurance',subtab:t});
   document.getElementById('ins-term').style.display=(t==='term')?'block':'none';
   document.getElementById('ins-health').style.display=(t==='health')?'block':'none';
   document.getElementById('ins-hra').style.display=(t==='hra')?'block':'none';
@@ -2381,6 +2407,7 @@ function cBd(){
 // ── INFLATION ────────────────────────────────────────────────────────────────
 let _inflTab='future';
 function setInflTab(t,btn){document.querySelectorAll('#page-inflation .stab').forEach(b=>b.classList.remove('active'));btn.classList.add('active');_inflTab=t;
+  if(typeof gtag!=='undefined') gtag('event','subtab_open',{module:'inflation',subtab:t});
   document.getElementById('infl-future').style.display=(t==='future')?'block':'none';
   document.getElementById('infl-real').style.display=(t==='real')?'block':'none';
   document.getElementById('infl-purchasing').style.display=(t==='purchasing')?'block':'none';
@@ -2450,21 +2477,45 @@ function resetAll(){
   calc();
 }
 
-window.addEventListener('load', () => {
-  // Loans: init defaults then calculate
-  setLT('personal', document.querySelector('#page-loans .stab.active'));
-  // Tax: init variable months then calculate immediately
+// Single unified init — runs after ALL HTML including new module pages is parsed
+document.addEventListener('DOMContentLoaded', () => {
+  // ── Tax (compare tab default) ───────────────────────────
   setVF();
-  // Force immediate calc after short delay (DOM needs to settle)
-  setTimeout(() => { if(typeof calc==='function') calc(); }, 50);
-  // Init new modules
-  setSavTab('fd', document.querySelector('#page-savings .stab.active'));
-  setSipTab('sip', document.querySelector('#page-sip .stab.active'));
-  setRetTab('corpus', document.querySelector('#page-retire .stab.active'));
-  setRealTab('buyvrent', document.querySelector('#page-realty .stab.active'));
-  setInsTab('term', document.querySelector('#page-insurance .stab.active'));
-  setInflTab('future', document.querySelector('#page-inflation .stab.active'));
+  setTimeout(() => { if(typeof calc==='function') calc(); }, 80);
+
+  // ── Loans ───────────────────────────────────────────────
+  const loanBtn = document.querySelector('#page-loans .stab.active');
+  if(loanBtn) setLT('personal', loanBtn);
+
+  // ── Savings ─────────────────────────────────────────────
+  const savBtn = document.querySelector('#page-savings .stab');
+  if(savBtn){ savBtn.classList.add('active'); setSavTab('fd', savBtn); }
+
+  // ── SIP ─────────────────────────────────────────────────
+  const sipBtn = document.querySelector('#page-sip .stab');
+  if(sipBtn){ sipBtn.classList.add('active'); setSipTab('sip', sipBtn); }
+
+  // ── Retirement ──────────────────────────────────────────
+  const retBtn = document.querySelector('#page-retire .stab');
+  if(retBtn){ retBtn.classList.add('active'); setRetTab('corpus', retBtn); }
+
+  // ── Real Estate: hide non-active sub-sections ───────────
+  const realBtn = document.querySelector('#page-realty .stab');
+  if(realBtn){ realBtn.classList.add('active'); setRealTab('buyvrent', realBtn); }
+
+  // ── Insurance: hide non-active sub-sections ─────────────
+  const insBtn = document.querySelector('#page-insurance .stab');
+  if(insBtn){ insBtn.classList.add('active'); setInsTab('term', insBtn); }
+
+  // ── Inflation: hide non-active sub-sections ─────────────
+  const inflBtn = document.querySelector('#page-inflation .stab');
+  if(inflBtn){ inflBtn.classList.add('active'); setInflTab('future', inflBtn); }
+
+  // ── Budget ──────────────────────────────────────────────
   cBd();
+
+  // ── GA4 page_view ────────────────────────────────────────
+  if(typeof gtag!=='undefined') gtag('event','page_view',{page_title:'ComFinCalc',page_location:window.location.href});
 });
 </script>
 <!-- ═══════════════════════════════════════════════════════
