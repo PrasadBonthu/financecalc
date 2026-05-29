@@ -3,8 +3,70 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>ComFinCalc — Free Indian Salary & Finance Calculator</title>
-<meta name="description" content="Free Indian salary calculator — Income Tax New vs Old Regime, SIP, Loans, Retirement, Budget, Real Estate and more. FY 2025-26.">
+
+<!-- ── PRIMARY SEO ──────────────────────────────────────────────────────── -->
+<title>ComFinCalc — India's New Salary & Income Tax Calculator FY 2025-26</title>
+<meta name="description" content="India's New salary & finance calculator. Compare New vs Old tax regime, calculate EMI, SIP returns, retirement corpus, budget planner & more. No login. FY 2025-26.">
+<meta name="keywords" content="income tax calculator India 2025-26, new vs old tax regime, salary calculator India, SIP calculator, EMI calculator, HRA exemption, PPF calculator, retirement planner India, tax saving calculator, CTC take home calculator">
+<meta name="author" content="ComFinCalc — Made by an Indian Tax Payer">
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#0a1628">
+<link rel="canonical" href="https://comfincalc.com">
+
+<!-- ── OPEN GRAPH (WhatsApp, LinkedIn, Facebook) ────────────────────────── -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://comfincalc.com">
+<meta property="og:title" content="ComFinCalc — India's New Salary & Tax Calculator">
+<meta property="og:description" content="Compare New vs Old tax regime, calculate take-home salary, SIP returns, loan EMI, retirement corpus & more. No login. FY 2025-26.">
+<meta property="og:image" content="https://comfincalc.com/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:site_name" content="ComFinCalc">
+<meta property="og:locale" content="en_IN">
+
+<!-- ── TWITTER / X CARD ─────────────────────────────────────────────────── -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:url" content="https://comfincalc.com">
+<meta name="twitter:title" content="ComFinCalc — India's New Salary & Tax Calculator">
+<meta name="twitter:description" content="Compare New vs Old tax regime, SIP, EMI, Retirement & more. No login. FY 2025-26.">
+<meta name="twitter:image" content="https://comfincalc.com/og-image.png">
+
+<!-- ── STRUCTURED DATA (Google Rich Results) ────────────────────────────── -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "ComFinCalc",
+  "url": "https://comfincalc.com",
+  "description": "India's New salary and finance calculator. Compare New vs Old income tax regime, calculate EMI, SIP returns, retirement corpus, HRA exemption and more. FY 2025-26.",
+  "applicationCategory": "FinanceApplication",
+  "operatingSystem": "Any",
+  "browserRequirements": "Requires JavaScript",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "INR"
+  },
+  "author": {
+    "@type": "Person",
+    "name": "ComFinCalc — Made by an Indian Tax Payer"
+  },
+  "inLanguage": "en-IN",
+  "countryOfOrigin": "IN",
+  "featureList": [
+    "Income Tax Calculator — New vs Old Regime FY 2025-26",
+    "Salary Take-Home Calculator",
+    "SIP & Mutual Fund Calculator",
+    "Loan EMI Calculator",
+    "Retirement Planner",
+    "FD RD PPF NSC Savings Calculator",
+    "HRA Exemption Calculator",
+    "Budget Planner 50/30/20",
+    "Real Estate Buy vs Rent",
+    "Inflation Calculator"
+  ]
+}
+</script>
 <!-- Google Analytics 4 -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-1STRNBRX9V"></script>
 <script>
@@ -83,7 +145,8 @@ header{background:var(--navy);padding:0 1.25rem;display:flex;align-items:center;
 .slw input[type=range]{flex:1;-webkit-appearance:none;height:4px;background:var(--border);border-radius:2px;border:none;padding:0;cursor:pointer;min-width:0}
 .slw input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:17px;height:17px;border-radius:50%;background:var(--blue);border:2px solid #fff;box-shadow:0 0 0 2px var(--blue)}
 .sv{font-size:.84rem;font-weight:600;color:var(--blue);min-width:70px;text-align:right;white-space:nowrap}
-/* Loan: slider + number input side by side */
+.btn-reset{font-family:var(--fb);font-size:.78rem;font-weight:600;padding:6px 16px;border-radius:8px;border:1.5px solid #d97706;background:#fffbeb;color:#d97706;cursor:pointer;white-space:nowrap;flex-shrink:0;transition:all .15s}
+.btn-reset:hover{background:#d97706;color:#fff}
 .sw{display:flex;align-items:center;gap:8px}
 .sw input[type=range]{flex:1;-webkit-appearance:none;height:4px;background:var(--border);border-radius:2px;border:none;padding:0;cursor:pointer;min-width:0}
 .sw input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:17px;height:17px;border-radius:50%;background:var(--blue);border:2px solid #fff;box-shadow:0 0 0 2px var(--blue)}
@@ -306,7 +369,7 @@ tbody td:first-child{text-align:left;color:var(--muted)}
     <div class="tagline">Made in 🇮🇳 by a tax payer, for tax payers</div>
   </div>
   <div class="hdr-right">
-    <span class="hdr-badge" style="background:#14532d;color:#4ade80">Free</span>
+    <span class="hdr-badge" style="background:#14532d;color:#4ade80">✨ New</span>
     <span class="hdr-badge" style="background:#1e3a5f;color:#60a5fa">No login</span>
     <span class="hdr-badge" style="background:#3b1f5e;color:#c084fc">FY 2025-26</span>
     <div class="hdr-sep"></div>
@@ -450,7 +513,7 @@ tbody td:first-child{text-align:left;color:var(--muted)}
 <div class="tax-sub-page active" id="taxpage-new">
 <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;margin-bottom:.2rem">
   <h1 style="margin-bottom:0">🟢 New Regime Calculator <span style="font-size:.9rem;font-weight:400;color:var(--muted)">India — FY 2025-26</span></h1>
-  <button onclick="resetAll()" title="Clear all text fields" style="font-family:var(--fb);font-size:.78rem;font-weight:600;padding:7px 16px;border-radius:8px;border:1.5px solid var(--coral);background:#fff;color:var(--coral);cursor:pointer;white-space:nowrap;flex-shrink:0;transition:all .15s;margin-top:4px" onmouseover="this.style.background='var(--coral)';this.style.color='#fff'" onmouseout="this.style.background='#fff';this.style.color='var(--coral)'">🔄 Reset</button>
+  <button onclick="resetAll()" class="btn-reset" title="Reset to defaults">↺ Reset</button>
 </div>
 <div class="sub">Default regime from FY 2025-26 · Simpler filing · Zero tax up to ₹12.75L</div>
 <div style="background:#f0fdf4;border:1px solid #a7f3d0;border-left:4px solid var(--green);border-radius:10px;padding:10px 15px;margin-bottom:1.2rem;font-size:.8rem;color:#065f46;line-height:1.7">
@@ -679,7 +742,7 @@ tbody td:first-child{text-align:left;color:var(--muted)}
 </div><!-- end right -->
 </div><!-- end grid -->
 <div style="text-align:center;margin:0 0 1.5rem">
-  <button onclick="resetAll()" style="font-family:var(--fb);font-size:.82rem;font-weight:600;padding:10px 28px;border-radius:8px;border:1.5px solid var(--coral);background:#fff;color:var(--coral);cursor:pointer;transition:all .15s" onmouseover="this.style.background='var(--coral)';this.style.color='#fff'" onmouseout="this.style.background='#fff';this.style.color='var(--coral)'">🔄 Reset All</button>
+  <button onclick="resetAll()" class="btn-reset">↺ Reset All</button>
 </div>
 </div><!-- end taxpage-new -->
 
@@ -689,7 +752,7 @@ tbody td:first-child{text-align:left;color:var(--muted)}
 <div class="tax-sub-page" id="taxpage-old">
 <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;margin-bottom:.2rem">
   <h1 style="margin-bottom:0">🟡 Old Regime Calculator <span style="font-size:.9rem;font-weight:400;color:var(--muted)">India — FY 2025-26</span></h1>
-  <button onclick="resetAll()" title="Clear all text fields" style="font-family:var(--fb);font-size:.78rem;font-weight:600;padding:7px 16px;border-radius:8px;border:1.5px solid var(--coral);background:#fff;color:var(--coral);cursor:pointer;white-space:nowrap;flex-shrink:0;transition:all .15s;margin-top:4px" onmouseover="this.style.background='var(--coral)';this.style.color='#fff'" onmouseout="this.style.background='#fff';this.style.color='var(--coral)'">🔄 Reset</button>
+  <button onclick="resetAll()" class="btn-reset" title="Reset to defaults">↺ Reset</button>
 </div>
 <div class="sub">Deductions apply · HRA · 80C · 80D · Home Loan · Opt-in annually</div>
 <div style="background:#fffbeb;border:1px solid #fcd34d;border-left:4px solid #d97706;border-radius:10px;padding:10px 15px;margin-bottom:1.2rem;font-size:.8rem;color:#78350f;line-height:1.7">
@@ -954,7 +1017,7 @@ tbody td:first-child{text-align:left;color:var(--muted)}
 </div><!-- end right -->
 </div><!-- end grid -->
 <div style="text-align:center;margin:0 0 1.5rem">
-  <button onclick="resetAll()" style="font-family:var(--fb);font-size:.82rem;font-weight:600;padding:10px 28px;border-radius:8px;border:1.5px solid var(--coral);background:#fff;color:var(--coral);cursor:pointer;transition:all .15s" onmouseover="this.style.background='var(--coral)';this.style.color='#fff'" onmouseout="this.style.background='#fff';this.style.color='var(--coral)'">🔄 Reset All</button>
+  <button onclick="resetAll()" class="btn-reset">↺ Reset All</button>
 </div>
 </div><!-- end taxpage-old -->
 
@@ -964,7 +1027,7 @@ tbody td:first-child{text-align:left;color:var(--muted)}
 <div class="tax-sub-page" id="taxpage-compare">
 <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;margin-bottom:.2rem;flex-wrap:wrap">
   <h1 style="margin-bottom:0">⚖️ New vs Old Regime <span style="font-size:.9rem;font-weight:400;color:var(--muted)">India — FY 2025-26</span></h1>
-  <button onclick="resetAll()" title="Clear all text fields to start fresh" style="font-family:var(--fb);font-size:.78rem;font-weight:600;padding:7px 16px;border-radius:8px;border:1.5px solid var(--coral);background:#fff;color:var(--coral);cursor:pointer;white-space:nowrap;flex-shrink:0;transition:all .15s;margin-top:4px" onmouseover="this.style.background='var(--coral)';this.style.color='#fff'" onmouseout="this.style.background='#fff';this.style.color='var(--coral)'">🔄 Reset</button>
+  <button onclick="resetAll()" class="btn-reset" title="Reset to defaults">↺ Reset</button>
 </div>
 <div class="sub">Basic salary drives all CTC components · Correct slabs · 87A rebate · Variable pay · Month-wise take-home</div>
 
@@ -1285,7 +1348,7 @@ tbody td:first-child{text-align:left;color:var(--muted)}
 
 
 <div style="text-align:center;margin:0 0 1.5rem">
-  <button onclick="resetAll()" style="font-family:var(--fb);font-size:.82rem;font-weight:600;padding:10px 28px;border-radius:8px;border:1.5px solid var(--coral);background:#fff;color:var(--coral);cursor:pointer;transition:all .15s" onmouseover="this.style.background='var(--coral)';this.style.color='#fff'" onmouseout="this.style.background='#fff';this.style.color='var(--coral)'">🔄 Reset All to Default</button>
+  <button onclick="resetAll()" class="btn-reset">↺ Reset to Defaults</button>
 </div>
 </div><!-- end grid -->
 </div><!-- end taxpage-compare -->
@@ -2486,10 +2549,10 @@ function cPp(){
 // ── SHARE ─────────────────────────────────────────────────────────────────────
 function shareApp(source='header'){
   const url='https://comfincalc.com';
-  const text='🇮🇳 ComFinCalc — Free Indian salary & finance calculator. New vs Old tax regime, SIP, Loans, Retirement & more. No login needed!\n\n'+url;
+  const text='🇮🇳 ComFinCalc — India\'s New salary & finance calculator. New vs Old tax regime, SIP, Loans, Retirement & more. No login needed!\n\n'+url;
   if(navigator.share){
     if(typeof gtag!=='undefined') gtag('event','share_click',{source,method:'native'});
-    navigator.share({title:'ComFinCalc',text:'Free Indian salary & finance calculator',url});
+    navigator.share({title:'ComFinCalc',text:'India\'s New salary & finance calculator',url});
   } else if(navigator.clipboard){
     if(typeof gtag!=='undefined') gtag('event','share_click',{source,method:'copy'});
     navigator.clipboard.writeText(url).then(()=>{
@@ -3147,7 +3210,7 @@ document.addEventListener('DOMContentLoaded', () => {
     <button onclick="shareApp('footer')" class="footer-share" style="font-size:.72rem;font-weight:700;padding:4px 14px;border-radius:10px;background:#1a56db;color:#fff;border:none;cursor:pointer;transition:background .15s" onmouseover="this.style.background='#1648c0'" onmouseout="this.style.background='#1a56db'">↗ Share comfincalc.com</button>
   </div>
   <div style="color:#475569;font-size:.7rem;margin-bottom:.35rem">
-    🇮🇳 Made by a tax payer &nbsp;·&nbsp; Built for Indian salaried employees &nbsp;·&nbsp; Free to use &nbsp;·&nbsp; No login &nbsp;·&nbsp; No data stored
+    🇮🇳 Made by a tax payer &nbsp;·&nbsp; Built for Indian salaried employees &nbsp;·&nbsp; No cost &nbsp;·&nbsp; No login &nbsp;·&nbsp; No data stored
   </div>
   <span style="color:#334155;font-size:.68rem">© <span id="footer-year"></span> ComFinCalc &nbsp;·&nbsp; For simulation and planning purposes only &nbsp;·&nbsp; Not financial advice</span>
 </footer>
