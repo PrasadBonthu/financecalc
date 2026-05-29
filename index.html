@@ -488,6 +488,8 @@ tbody td:first-child{text-align:left;color:var(--muted)}
 <input type="hidden" id="pfopt" value="1">
 <input type="hidden" id="varP" value="25500">
 <input type="hidden" id="premB" value="38138">
+<input type="hidden" id="premActual" value="38138">
+<input type="hidden" id="premActualMo" value="May">
 <input type="hidden" id="varFreq" value="biannual">
 <input type="hidden" id="premFreq" value="annual">
 <input type="hidden" id="foodMo" value="0">
@@ -631,8 +633,22 @@ tbody td:first-child{text-align:left;color:var(--muted)}
       <input type="number" id="n-varP" value="25500" oninput="syncVFN()">
     </div>
     <div class="f">
-      <div class="fl"><span>Premium Bonus Target (₹/yr)</span></div>
+      <div class="fl"><span>Premium Bonus Target (₹/yr) <span style="font-size:.65rem;background:#1e3a5f;color:#60a5fa;padding:1px 5px;border-radius:6px;margin-left:3px">CTC</span></span></div>
       <input type="number" id="n-premB" value="38138" oninput="syncVFN()">
+      <div class="ht">Used for CTC total only</div>
+    </div>
+  </div>
+  <div class="r2">
+    <div class="f">
+      <div class="fl"><span>Last Year Bonus (₹) <span style="font-size:.65rem;background:#14532d;color:#4ade80;padding:1px 5px;border-radius:6px;margin-left:3px">TAX</span></span></div>
+      <input type="number" id="n-premActual" value="35000" oninput="syncVFN()">
+      <div class="ht">Used for tax calculation</div>
+    </div>
+    <div class="f">
+      <div class="fl"><span>Bonus Paid in Month</span></div>
+      <select id="n-premActualMo" onchange="syncVFN()">
+        <option>Apr</option><option selected>May</option><option>Jun</option><option>Jul</option><option>Aug</option><option>Sep</option><option>Oct</option><option>Nov</option><option>Dec</option><option>Jan</option><option>Feb</option><option>Mar</option>
+      </select>
     </div>
   </div>
   <div class="f">
@@ -870,8 +886,22 @@ tbody td:first-child{text-align:left;color:var(--muted)}
       <input type="number" id="o-varP" value="25500" oninput="syncVFO()">
     </div>
     <div class="f">
-      <div class="fl"><span>Premium Bonus Target (₹/yr)</span></div>
+      <div class="fl"><span>Premium Bonus Target (₹/yr) <span style="font-size:.65rem;background:#1e3a5f;color:#60a5fa;padding:1px 5px;border-radius:6px;margin-left:3px">CTC</span></span></div>
       <input type="number" id="o-premB" value="38138" oninput="syncVFO()">
+      <div class="ht">Used for CTC total only</div>
+    </div>
+  </div>
+  <div class="r2">
+    <div class="f">
+      <div class="fl"><span>Last Year Bonus (₹) <span style="font-size:.65rem;background:#14532d;color:#4ade80;padding:1px 5px;border-radius:6px;margin-left:3px">TAX</span></span></div>
+      <input type="number" id="o-premActual" value="38138" oninput="syncVFO()">
+      <div class="ht">Used for tax calculation</div>
+    </div>
+    <div class="f">
+      <div class="fl"><span>Bonus Paid in Month</span></div>
+      <select id="o-premActualMo" onchange="syncVFO()">
+        <option>Apr</option><option selected>May</option><option>Jun</option><option>Jul</option><option>Aug</option><option>Sep</option><option>Oct</option><option>Nov</option><option>Dec</option><option>Jan</option><option>Feb</option><option>Mar</option>
+      </select>
     </div>
   </div>
   <div class="f">
@@ -1151,9 +1181,23 @@ tbody td:first-child{text-align:left;color:var(--muted)}
       <input type="number" id="c-varP" value="25500" oninput="syncVFC()">
     </div>
     <div class="f">
-      <div class="fl"><span>Premium Bonus Target (₹/yr)</span></div>
+      <div class="fl"><span>Premium Bonus Target (₹/yr) <span style="font-size:.65rem;background:#1e3a5f;color:#60a5fa;padding:1px 5px;border-radius:6px;margin-left:3px">CTC</span></span></div>
       <input type="number" id="c-premB" value="38138" oninput="syncVFC()">
-      <div class="ht">0 if not applicable.</div>
+      <div class="ht">Used for CTC total only</div>
+    </div>
+  </div>
+  <div class="r2">
+    <div class="f">
+      <div class="fl"><span>Last Year Bonus (₹) <span style="font-size:.65rem;background:#14532d;color:#4ade80;padding:1px 5px;border-radius:6px;margin-left:3px">TAX</span></span></div>
+      <input type="number" id="c-premActual" value="38138" oninput="syncVFC()">
+      <div class="ht">Used for tax calculation</div>
+    </div>
+    <div class="f">
+      <div class="fl"><span>Bonus Paid in Month</span></div>
+      <select id="c-premActualMo" onchange="syncVFC()">
+        <option>Apr</option><option>May</option><option selected>May</option><option>Jun</option><option>Jul</option><option>Aug</option><option>Sep</option><option>Oct</option><option>Nov</option><option>Dec</option><option>Jan</option><option>Feb</option><option>Mar</option>
+      </select>
+      <div class="ht">Month when actual bonus is credited to salary.</div>
     </div>
   </div>
   <div class="f">
@@ -1358,6 +1402,19 @@ tbody td:first-child{text-align:left;color:var(--muted)}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 <script>
 // ── NAVIGATION ──────────────────────────────────────────────────────────────
+// ── MONTH NAVIGATOR for In-Hand cards ────────────────────────────────────────
+window._ihSelMo = null; // null = will be set to current month on first calc
+function selectIHMonth(mo){
+  window._ihSelMo=mo;
+  if(window._rebuildIHCards) window._rebuildIHCards();
+}
+function navIHMonth(dir){
+  const MO=['Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar'];
+  const cur=window._ihSelMo||MO[0];
+  window._ihSelMo=MO[(MO.indexOf(cur)+dir+12)%12];
+  if(window._rebuildIHCards) window._rebuildIHCards();
+}
+
 function showPage(id,btn){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.tnav-btn').forEach(b=>b.classList.remove('active'));
@@ -1450,10 +1507,10 @@ function syncVFO(){ _syncVF('o'); }
 function syncVFC(){ _syncVF('c'); }
 function _syncVF(src){
   // Sync master hidden fields from source prefix
-  const fields=['varP','premB','varFreq','premFreq'];
+  const fields=['varP','premB','premActual','premActualMo','varFreq','premFreq'];
   fields.forEach(f=>{
     const el=document.getElementById(src+'-'+f);
-    if(el) document.getElementById(f).value=el.value;
+    if(el) document.getElementById(f)&&(document.getElementById(f).value=el.value);
   });
   // Mirror to other prefixes
   TAB_PREFIXES.filter(p=>p!==src).forEach(p=>{
@@ -1722,22 +1779,22 @@ function calc(){
   ['c','n','o'].forEach(p=>{const el=document.getElementById(p+'-pfempLbl');if(el)el.textContent=pfopt==='2'?'12% of ₹15k':'12% of Basic';});
   ['c','n','o'].forEach(p=>{setAu(p+'-pfEr',pfErAnn);setAu(p+'-pfEmp',pfEmpAnn);setAu(p+'-grat',gratAnn);setAu(p+'-retB',retB);});
 
-  const varTarget=+document.getElementById('varP').value||0;
-  const premTarget=+document.getElementById('premB').value||0;
-  const varPctVal=+document.getElementById('varPct').value;
-  const varAct=Math.round(varTarget*varPctVal/100);
-  const premAct=Math.round(premTarget*varPctVal/100);
-  const totalVar=varAct+premAct;
+  const varTarget   = +document.getElementById('varP').value||0;
+  const premTarget  = +document.getElementById('premB').value||0;   // CTC display only
+  const premActual  = +document.getElementById('premActual').value||0; // tax calc
+  const premActualMo= document.getElementById('premActualMo').value||'May'; // month paid
+  const varPctVal   = +document.getElementById('varPct').value;
+  const varAct      = Math.round(varTarget*varPctVal/100);
+  const premAct     = Math.round(premTarget*varPctVal/100); // kept for CTC display only
+  const totalVar    = varAct + premActual;                  // TAX uses actual bonus
   ['c','n','o'].forEach(p=>{const el=document.getElementById(p+'-varPctV');if(el)el.textContent=pc(varPctVal,0);});
 
-  const varFreq=document.getElementById('varFreq').value;
-  const premFreq=document.getElementById('premFreq').value;
-  const varC={annual:1,biannual:2,quarterly:4}[varFreq];
-  const premC={annual:1,biannual:2,quarterly:4}[premFreq];
-  const varMos=getMonths('V',varFreq);
-  const premMos=getMonths('P',premFreq);
-  const varPP=varC>0?Math.round(varAct/varC):0;
-  const premPP=premC>0?Math.round(premAct/premC):0;
+  const varFreq   = document.getElementById('varFreq').value;
+  const varC      = {annual:1,biannual:2,quarterly:4}[varFreq]||1;
+  const varMos    = getMonths('V',varFreq);
+  const premMos   = [premActualMo];           // single month — actual bonus paid
+  const varPP     = varC>0?Math.round(varAct/varC):0;
+  const premPP    = premActual;               // full actual bonus, paid once
 
   const foodMo=+document.getElementById('foodMo').value;
   const foodAnn=foodMo*12;
@@ -1792,7 +1849,7 @@ function calc(){
     csub(`Gratuity provision (${pc(gratPct,2)} of Basic)`,fmt(gratAnn),'B'),
     SEC('C — Variable Pay (targets)',fmt(varTarget+premTarget),'secC'),
     varTarget>0?csub('Variable Pay',fmt(varTarget),'C'):'',
-    premTarget>0?csub('Premium Bonus',fmt(premTarget),'C'):'',
+    premTarget>0?csub('Premium Bonus — CTC Target',fmt(premTarget),'C'):'',
     R('Total CTC (A + B + C)',fmt(ctcTotal),'tot'),
     shiftAnn>0?R(`Shift Allowance (₹${fmt(shiftMoAmt)}/mo × 12)`,fmt(shiftAnn)):'',
     R('Gross Salary (incl. shift allowance)',fmt(grossSal),'grn'),
@@ -1844,15 +1901,17 @@ function calc(){
   // Variable summary
   const vTaxO=oF.total-oB.total, vTaxN=nF.total-nB.total;
   document.getElementById('c-vsum')&&(document.getElementById('c-vsum').innerHTML=totalVar>0?[
-    R('Variable Pay Targets',fmt(varTarget+premTarget)),
-    R(`Actual Payout (${pc(varPctVal,0)})`,fmt(totalVar)),
+    R('Variable Pay Target (CTC)',fmt(varTarget)),
+    R(`Variable Pay Actual (${pc(varPctVal,0)})`,fmt(varAct)),
+    premTarget>0?R('Premium Bonus Target (CTC)',fmt(premTarget)):'',
+    premActual>0?R(`Last Year Bonus (Tax) — paid ${premActualMo}`,fmt(premActual)):'',
+    R('Total Taxable Variable',fmt(totalVar),'tot'),
     R('Tax on Variable — Old',fmt(vTaxO),'neg'),
     R('Tax on Variable — New',fmt(vTaxN),'neg'),
     R('Net Variable in Hand — Old',fmt(totalVar-vTaxO),'grn'),
     R('Net Variable in Hand — New',fmt(totalVar-vTaxN),'grn'),
-  ].join(''):'');
+  ].filter(Boolean).join(''):'');
 
-  // In-hand uses BASE tax (salary only) — variables declared above after oB/nB
 
   function ihRow(lbl,val,cls=''){
     return `<div class="ih-row"><span class="ih-lbl ${cls==='inc'?'inc':''}">${lbl}</span><span class="ih-val ${cls}">${val}</span></div>`;
@@ -1866,33 +1925,47 @@ function calc(){
     return `<div style="font-size:.68rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin:.5rem 0 .2rem;padding-bottom:2px;border-bottom:1px dashed var(--border)">${lbl}</div>`;
   }
 
-  // buildIH called AFTER mrows is built (below) — uses current month row
-  function buildIH(regime, baseTax, th, curRow, curMoFull, fyMoIdx){
-    const moBasic = Math.floor(basic/12);
-    const moShift = shiftMoAmt;
-    const moHRA   = Math.floor(hra/12);
-    const moSpl   = Math.floor(spl/12);
-    const moConv  = Math.floor(conv/12);
+  // buildIH — uses selected month row from state
+  function buildIH(regime, baseTax, th, selRow, selMo, fyMoIdx, isCurMo){
+    const s      = window._ihState;
+    const moBasic= Math.floor(s.basic/12);
+    const moShift= s.shiftMoAmt;
+    const moHRA  = Math.floor(s.hra/12);
+    const moSpl  = Math.floor(s.spl/12);
+    const moConv = Math.floor(s.conv/12);
 
-    const curTax   = regime==='new' ? curRow.nTax : curRow.oTax;
-    const curNet   = regime==='new' ? curRow.nNet : curRow.oNet;
-    const curVar   = curRow.add;
-    const isVarMo  = curRow.isV;
+    const curTax  = regime==='new' ? selRow.nTax : selRow.oTax;
+    const curNet  = regime==='new' ? selRow.nNet : selRow.oNet;
+    const curVar  = selRow.add;
+    const isVarMo = selRow.isV;
 
-    const grossEarnings    = moBasic+moHRA+moSpl+moConv+moShift+curVar;
-    const grossDeductions  = pfEmpMo+(npsErMo||0)+(foodMo||0)+curTax+profTax;
+    const grossEarnings   = moBasic+moHRA+moSpl+moConv+moShift+curVar;
+    const grossDeductions = s.pfEmpMo+(s.npsErMo||0)+(s.foodMo||0)+curTax+s.profTax;
 
-    const regColor = regime==='new'?'var(--green)':'#d97706';
-    const regLabel = regime==='new'?'🟢 New Regime':'🟡 Old Regime';
-    const regBg    = regime==='new'?'#f0fdf4':'#fffbeb';
-    const regBdr   = regime==='new'?'#a7f3d0':'#fcd34d';
+    const regColor= regime==='new'?'var(--green)':'#d97706';
+    const regLabel= regime==='new'?'🟢 New Regime':'🟡 Old Regime';
+    const regBg   = regime==='new'?'#f0fdf4':'#fffbeb';
+    const regBdr  = regime==='new'?'#a7f3d0':'#fcd34d';
+
+    // Month navigator — Option C: arrows + dropdown (linked)
+    const moOpts = s.MONTHS.map(m=>`<option value="${m}"${m===selMo?' selected':''}>${s.moNames[m]||m} ${m==='Jan'||m==='Feb'||m==='Mar'?s.now.getFullYear():s.now.getFullYear()}</option>`).join('');
+    const curBadge= isCurMo?`<span style="font-size:.6rem;background:#1e3a5f;color:#60a5fa;padding:1px 5px;border-radius:6px;margin-left:4px">Current</span>`:'';
+    const navigator=`
+      <div style="display:flex;align-items:center;gap:4px;margin-top:4px">
+        <button onclick="navIHMonth(-1)" style="width:24px;height:24px;border-radius:50%;border:1px solid var(--border);background:var(--bg);color:var(--muted);cursor:pointer;font-size:.85rem;display:flex;align-items:center;justify-content:center;flex-shrink:0">◀</button>
+        <select onchange="selectIHMonth(this.value)" style="flex:1;font-size:.75rem;font-weight:600;padding:3px 6px;border:1.5px solid #fbbf24;border-radius:7px;background:#fffbeb;color:var(--text);cursor:pointer">${moOpts}</select>
+        <button onclick="navIHMonth(1)" style="width:24px;height:24px;border-radius:50%;border:1px solid var(--border);background:var(--bg);color:var(--muted);cursor:pointer;font-size:.85rem;display:flex;align-items:center;justify-content:center;flex-shrink:0">▶</button>
+      </div>`;
 
     return [
-      `<div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:4px;margin-bottom:.5rem">
-        <div class="rb-title" style="color:${regColor};margin-bottom:0">${regLabel} — ${curMoFull}</div>
-        <div style="font-size:.65rem;font-weight:600;padding:2px 8px;border-radius:8px;background:${regBg};color:${regColor};border:1px solid ${regBdr}">Month ${fyMoIdx} of 12</div>
+      `<div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:4px;margin-bottom:.3rem">
+        <div>
+          <div class="rb-title" style="color:${regColor};margin-bottom:0">${regLabel}${curBadge}</div>
+          ${navigator}
+        </div>
+        <div style="font-size:.65rem;font-weight:600;padding:2px 8px;border-radius:8px;background:${regBg};color:${regColor};border:1px solid ${regBdr};margin-top:2px">Month ${fyMoIdx} of 12</div>
       </div>`,
-      isVarMo?`<div style="font-size:.7rem;color:var(--amber);font-weight:600;background:#fffbeb;border-radius:5px;padding:3px 7px;margin-bottom:.4rem">★ Variable pay month — +${fmt(curVar)} included</div>`:'',
+      isVarMo?`<div style="font-size:.7rem;color:var(--amber);font-weight:600;background:#fffbeb;border-radius:5px;padding:3px 7px;margin:.4rem 0">★ Variable pay month — +${fmt(curVar)} included</div>`:'',
       ihSecHead('Gross Earnings'),
       ihRow('Basic',fmt(moBasic),'inc'),
       ihRow('HRA',fmt(moHRA),'inc'),
@@ -1902,11 +1975,11 @@ function calc(){
       isVarMo?ihRow('Variable Pay',fmt(curVar),'inc'):'',
       ihSub('Subtotal Earnings',fmt(grossEarnings),'grn'),
       ihSecHead('Gross Deductions'),
-      ihRow('Employee PF (12%)','− '+fmt(pfEmpMo),'co'),
-      npsErMo>0?ihRow(`Employer NPS (${npsPct}%)`,'− '+fmt(npsErMo),'co'):'',
-      foodMo>0?ihRow('Food Coupons (non-cash)','− '+fmt(foodMo),'co'):'',
+      ihRow('Employee PF (12%)','− '+fmt(s.pfEmpMo),'co'),
+      s.npsErMo>0?ihRow(`Employer NPS (${s.npsPct}%)`,'− '+fmt(s.npsErMo),'co'):'',
+      s.foodMo>0?ihRow('Food Coupons (non-cash)','− '+fmt(s.foodMo),'co'):'',
       ihRow('Income Tax (TDS)','− '+fmt(curTax),'co'),
-      ihRow('Professional Tax','− '+fmt(profTax),'co'),
+      ihRow('Professional Tax','− '+fmt(s.profTax),'co'),
       ihSub('Subtotal Deductions','− '+fmt(grossDeductions),'red'),
       ihDiv(),
       `<div class="ih-row" style="margin-top:.2rem"><span class="ih-lbl" style="font-weight:700;color:var(--navy)">💰 Net Pay to Bank</span><span class="ih-val net" style="color:${regColor};font-size:1rem">${fmt(curNet)}</span></div>`,
@@ -1937,15 +2010,39 @@ function calc(){
   });
   const moGrossWithShift = moGross + shiftMoAmt;
 
-  // Current month data — used by buildIH
-  const _curRow    = mrows.find(r=>r.mo===_curMo) || mrows[0];
-  const _fyMoIdx   = MONTHS.indexOf(_curMo)+1||1;
-  const _moNames   = {Jan:'January',Feb:'February',Mar:'March',Apr:'April',May:'May',Jun:'June',Jul:'July',Aug:'August',Sep:'September',Oct:'October',Nov:'November',Dec:'December'};
-  const _curMoFull = (_moNames[_curMo]||_curMo)+' '+_now.getFullYear();
+  // Selected month for in-hand cards — persists across calc() calls
+  window._ihSelMo = window._ihSelMo || _curMo;
+  const _selMo   = window._ihSelMo;
+  const _selRow  = mrows.find(r=>r.mo===_selMo) || mrows[0];
+  const _fyMoIdx = MONTHS.indexOf(_selMo)+1||1;
+  const _isCurMo = _selMo === _curMo;
 
-  // Update in-hand cards with current month values
-  document.getElementById('inhand-old').innerHTML = buildIH('old', baseTaxO, baseOTH, _curRow, _curMoFull, _fyMoIdx);
-  document.getElementById('inhand-new').innerHTML = buildIH('new', baseTaxN, baseNTH, _curRow, _curMoFull, _fyMoIdx);
+  // ── Store state globally AFTER mrows is ready — navigator uses this ──────────
+  const _moNames = {Jan:'January',Feb:'February',Mar:'March',Apr:'April',May:'May',Jun:'June',Jul:'July',Aug:'August',Sep:'September',Oct:'October',Nov:'November',Dec:'December'};
+  window._ihState = {
+    mrows, MONTHS, basic, hra, spl, conv, shiftMoAmt,
+    pfEmpMo, npsErMo, foodMo, npsPct, profTax,
+    baseTaxO, baseTaxN, baseOTH, baseNTH,
+    varPP, premPP, varMos, premMos, moNames:_moNames,
+    now: _now
+  };
+
+  // Expose rebuild function — uses stored state so calc() doesn't need to re-run
+  window._rebuildIHCards = function(){
+    const s    = window._ihState;
+    const mo   = window._ihSelMo;
+    const row  = s.mrows.find(r=>r.mo===mo) || s.mrows[0];
+    const idx  = s.MONTHS.indexOf(mo)+1||1;
+    const isCur= mo===_calMos[s.now.getMonth()];
+    const html_o = buildIH('old', s.baseTaxO, s.baseOTH, row, mo, idx, isCur);
+    const html_n = buildIH('new', s.baseTaxN, s.baseNTH, row, mo, idx, isCur);
+    ['inhand-old','o-inhand'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML=html_o;});
+    ['inhand-new','n-inhand'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML=html_n;});
+  };
+
+  // Update in-hand cards with selected month values
+  document.getElementById('inhand-old').innerHTML = buildIH('old', baseTaxO, baseOTH, _selRow, _selMo, _fyMoIdx, _isCurMo);
+  document.getElementById('inhand-new').innerHTML = buildIH('new', baseTaxN, baseNTH, _selRow, _selMo, _fyMoIdx, _isCurMo);
   document.getElementById('inhand-var').innerHTML = totalVar>0
     ? R(`★ Variable pay months: ${[...new Set([...varMos,...premMos])].join(', ')} — see table below for net pay`,`+${fmt(varPP+premPP)} gross`,'')
     : '';
@@ -2609,14 +2706,16 @@ function resetAll(){
   }
   // Reset master hidden fields
   document.getElementById('basic').value = 150000;
-  const zeroIds = ['fixedAT','varP','premB','mobile','leavedays','shiftmo',
+  const zeroIds = ['fixedAT','varP','premB','premActual','mobile','leavedays','shiftmo',
                    'rent','lta','otherA','d80d','hli','npsSelf','othDed','othInc'];
   zeroIds.forEach(id => { const el=document.getElementById(id); if(el) el.value=0; });
+  const moEl=document.getElementById('premActualMo'); if(moEl) moEl.value='May';
   // Reset all tab-prefixed visible inputs too
   const allPfx=['n','o','c'];
   allPfx.forEach(p=>{
     const bEl=document.getElementById(p+'-basic'); if(bEl) bEl.value=150000;
     const fEl=document.getElementById(p+'-fixedAT'); if(fEl) fEl.value=0;
+    const mEl=document.getElementById(p+'-premActualMo'); if(mEl) mEl.value='May';
     zeroIds.forEach(id=>{const el=document.getElementById(p+'-'+id);if(el)el.value=0;});
   });
   // Reset food buttons
