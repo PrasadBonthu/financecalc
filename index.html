@@ -1858,38 +1858,60 @@ function calc(){
     return `<div class="ih-row"><span class="ih-lbl ${cls==='inc'?'inc':''}">${lbl}</span><span class="ih-val ${cls}">${val}</span></div>`;
   }
   function ihDiv(){ return '<div class="ih-div"></div>'; }
+  function ihSub(lbl,val,pos){
+    const c=pos==='grn'?'var(--green)':'var(--coral)';
+    return `<div class="ih-row" style="background:var(--bg);border-radius:5px;padding:3px 6px;margin:3px 0"><span class="ih-lbl" style="font-weight:600;font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em">${lbl}</span><span class="ih-val" style="font-weight:700;color:${c}">${val}</span></div>`;
+  }
+  function ihSecHead(lbl){
+    return `<div style="font-size:.68rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin:.5rem 0 .2rem;padding-bottom:2px;border-bottom:1px dashed var(--border)">${lbl}</div>`;
+  }
 
-  function buildIH(regime, baseTax, th){
+  // buildIH called AFTER mrows is built (below) — uses current month row
+  function buildIH(regime, baseTax, th, curRow, curMoFull, fyMoIdx){
     const moBasic = Math.floor(basic/12);
     const moShift = shiftMoAmt;
     const moHRA   = Math.floor(hra/12);
     const moSpl   = Math.floor(spl/12);
     const moConv  = Math.floor(conv/12);
-    // th already has profTax baked in (baseOTH/baseNTH computed net of profTax*12)
+
+    const curTax   = regime==='new' ? curRow.nTax : curRow.oTax;
+    const curNet   = regime==='new' ? curRow.nNet : curRow.oNet;
+    const curVar   = curRow.add;
+    const isVarMo  = curRow.isV;
+
+    const grossEarnings    = moBasic+moHRA+moSpl+moConv+moShift+curVar;
+    const grossDeductions  = pfEmpMo+(npsErMo||0)+(foodMo||0)+curTax+profTax;
+
+    const regColor = regime==='new'?'var(--green)':'#d97706';
+    const regLabel = regime==='new'?'🟢 New Regime':'🟡 Old Regime';
+    const regBg    = regime==='new'?'#f0fdf4':'#fffbeb';
+    const regBdr   = regime==='new'?'#a7f3d0':'#fcd34d';
+
     return [
-      `<div class="rb-title">${regime==='old'?'🟡 Old Regime — Regular Month':'🟢 New Regime — Regular Month'}</div>`,
-      `<div style="font-size:.72rem;color:var(--muted);margin-bottom:.4rem">(Base salary only — variable pay months shown in table below)</div>`,
+      `<div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:4px;margin-bottom:.5rem">
+        <div class="rb-title" style="color:${regColor};margin-bottom:0">${regLabel} — ${curMoFull}</div>
+        <div style="font-size:.65rem;font-weight:600;padding:2px 8px;border-radius:8px;background:${regBg};color:${regColor};border:1px solid ${regBdr}">Month ${fyMoIdx} of 12</div>
+      </div>`,
+      isVarMo?`<div style="font-size:.7rem;color:var(--amber);font-weight:600;background:#fffbeb;border-radius:5px;padding:3px 7px;margin-bottom:.4rem">★ Variable pay month — +${fmt(curVar)} included</div>`:'',
+      ihSecHead('Gross Earnings'),
       ihRow('Basic',fmt(moBasic),'inc'),
       ihRow('HRA',fmt(moHRA),'inc'),
       ihRow('Special Allowance',fmt(moSpl),'inc'),
       ihRow('Conveyance',fmt(moConv),'inc'),
-    moShift>0?ihRow('Shift Allowance',fmt(moShift),'inc'):'',
+      moShift>0?ihRow('Shift Allowance',fmt(moShift),'inc'):'',
+      isVarMo?ihRow('Variable Pay',fmt(curVar),'inc'):'',
+      ihSub('Subtotal Earnings',fmt(grossEarnings),'grn'),
+      ihSecHead('Gross Deductions'),
+      ihRow('Employee PF (12%)','− '+fmt(pfEmpMo),'co'),
+      npsErMo>0?ihRow(`Employer NPS (${npsPct}%)`,'− '+fmt(npsErMo),'co'):'',
+      foodMo>0?ihRow('Food Coupons (non-cash)','− '+fmt(foodMo),'co'):'',
+      ihRow('Income Tax (TDS)','− '+fmt(curTax),'co'),
+      ihRow('Professional Tax','− '+fmt(profTax),'co'),
+      ihSub('Subtotal Deductions','− '+fmt(grossDeductions),'red'),
       ihDiv(),
-      ihRow('Employee PF (12%)','- '+fmt(pfEmpMo),'co'),
-      npsErMo>0?ihRow(`Employer NPS (${npsPct}%)`,'- '+fmt(npsErMo),'co'):'',
-      foodMo>0?ihRow('Food Coupons (non-cash)','- '+fmt(foodMo),'co'):'',
-      ihRow('Income Tax (TDS)','- '+fmt(Math.floor(baseTax/12)),'co'),
-      ihRow('Professional Tax','- '+fmt(profTax),'co'),
-      ihDiv(),
-      `<div class="ih-row"><span class="ih-lbl" style="font-weight:700;color:var(--navy)">💰 Net Pay to Bank</span><span class="ih-val net">${fmt(th)}</span></div>`,
+      `<div class="ih-row" style="margin-top:.2rem"><span class="ih-lbl" style="font-weight:700;color:var(--navy)">💰 Net Pay to Bank</span><span class="ih-val net" style="color:${regColor};font-size:1rem">${fmt(curNet)}</span></div>`,
     ].filter(Boolean).join('');
   }
-
-  document.getElementById('inhand-old').innerHTML = buildIH('old', baseTaxO, baseOTH);
-  document.getElementById('inhand-new').innerHTML = buildIH('new', baseTaxN, baseNTH);
-  document.getElementById('inhand-var').innerHTML = totalVar>0
-    ? R(`★ Variable pay months: ${[...new Set([...varMos,...premMos])].join(', ')} — see table below for net pay`,`+${fmt(varPP+premPP)} gross`,'')
-    : '';
 
   // Month table
   // Detect current month for highlighting
@@ -1914,6 +1936,19 @@ function calc(){
     return{mo,add,moG,oTax,nTax,oNet,nNet,isV};
   });
   const moGrossWithShift = moGross + shiftMoAmt;
+
+  // Current month data — used by buildIH
+  const _curRow    = mrows.find(r=>r.mo===_curMo) || mrows[0];
+  const _fyMoIdx   = MONTHS.indexOf(_curMo)+1||1;
+  const _moNames   = {Jan:'January',Feb:'February',Mar:'March',Apr:'April',May:'May',Jun:'June',Jul:'July',Aug:'August',Sep:'September',Oct:'October',Nov:'November',Dec:'December'};
+  const _curMoFull = (_moNames[_curMo]||_curMo)+' '+_now.getFullYear();
+
+  // Update in-hand cards with current month values
+  document.getElementById('inhand-old').innerHTML = buildIH('old', baseTaxO, baseOTH, _curRow, _curMoFull, _fyMoIdx);
+  document.getElementById('inhand-new').innerHTML = buildIH('new', baseTaxN, baseNTH, _curRow, _curMoFull, _fyMoIdx);
+  document.getElementById('inhand-var').innerHTML = totalVar>0
+    ? R(`★ Variable pay months: ${[...new Set([...varMos,...premMos])].join(', ')} — see table below for net pay`,`+${fmt(varPP+premPP)} gross`,'')
+    : '';
   document.getElementById('mtbody').innerHTML=mrows.map(r=>`
     <tr${r.isV?' class="vm"':r.mo===_curMo?' class="cur-mo"':''}><td>${r.mo}${r.isV?' ★':''}${r.mo===_curMo?' 📍':''}</td>
     <td class="col-base">${fmt(r.moG+shiftMoAmt)}</td>
