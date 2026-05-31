@@ -13,6 +13,10 @@
 <meta name="theme-color" content="#0a1628">
 <link rel="canonical" href="https://comfincalc.com">
 
+<!-- ── FAVICON (inline SVG — no file upload needed) ─────────────────────── -->
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='12' fill='%230a1628'/><text x='10' y='44' font-size='26' font-weight='800' fill='%23ffffff' font-family='Georgia,serif'>C</text><text x='24' y='44' font-size='22' font-weight='800' fill='%234f86f7' font-family='Georgia,serif'>&#x20B9;</text><text x='43' y='44' font-size='26' font-weight='800' fill='%23ffffff' font-family='Georgia,serif'>C</text></svg>">
+<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='12' fill='%230a1628'/><text x='10' y='44' font-size='26' font-weight='800' fill='%23ffffff' font-family='Georgia,serif'>C</text><text x='24' y='44' font-size='22' font-weight='800' fill='%234f86f7' font-family='Georgia,serif'>&#x20B9;</text><text x='43' y='44' font-size='26' font-weight='800' fill='%23ffffff' font-family='Georgia,serif'>C</text></svg>">
+
 <!-- ── OPEN GRAPH (WhatsApp, LinkedIn, Facebook) ────────────────────────── -->
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://comfincalc.com">
@@ -494,6 +498,7 @@ tbody td:first-child{text-align:left;color:var(--muted)}
 <input type="hidden" id="premFreq" value="annual">
 <input type="hidden" id="foodMo" value="0">
 <input type="hidden" id="npsPct" value="0">
+<input type="hidden" id="vpf" value="0">
 <input type="hidden" id="mobile" value="0">
 <input type="hidden" id="gratPct" value="5.9489">
 <input type="hidden" id="varPct" value="100">
@@ -577,7 +582,7 @@ tbody td:first-child{text-align:left;color:var(--muted)}
   </div>
   <hr class="dv">
   <div class="f">
-    <div class="fl"><span>Employer NPS 80CCD(2) (% of Basic) <span class="tg b">Both</span></span><span class="sv" id="n-npsPctV">0% = ₹0/mo</span></div>
+    <div class="fl"><span>Employer NPS 80CCD(2) (% of Basic) <span class="tg b">Both</span> <span style="font-size:.6rem;color:var(--muted)">14% new · 10% old</span></span><span class="sv" id="n-npsPctV">0% = ₹0/mo</span></div>
     <div class="slw"><input type="range" id="n-npsPct" min="0" max="14" step="1" value="0" oninput="syncAndCalc('npsPct',this.value)"></div>
     <div class="ht">To NPS account — not bank. Reduces taxable in both regimes.</div>
   </div>
@@ -641,7 +646,7 @@ tbody td:first-child{text-align:left;color:var(--muted)}
   <div class="r2">
     <div class="f">
       <div class="fl"><span>Last Year Bonus (₹) <span style="font-size:.65rem;background:#14532d;color:#4ade80;padding:1px 5px;border-radius:6px;margin-left:3px">TAX</span></span></div>
-      <input type="number" id="n-premActual" value="35000" oninput="syncVFN()">
+      <input type="number" id="n-premActual" value="38138" oninput="syncVFN()">
       <div class="ht">Used for tax calculation</div>
     </div>
     <div class="f">
@@ -830,7 +835,7 @@ tbody td:first-child{text-align:left;color:var(--muted)}
   </div>
   <hr class="dv">
   <div class="f">
-    <div class="fl"><span>Employer NPS 80CCD(2) (% of Basic) <span class="tg b">Both</span></span><span class="sv" id="o-npsPctV">0% = ₹0/mo</span></div>
+    <div class="fl"><span>Employer NPS 80CCD(2) (% of Basic) <span class="tg b">Both</span> <span style="font-size:.6rem;color:var(--muted)">14% new · 10% old</span></span><span class="sv" id="o-npsPctV">0% = ₹0/mo</span></div>
     <div class="slw"><input type="range" id="o-npsPct" min="0" max="14" step="1" value="0" oninput="syncAndCalc('npsPct',this.value)"></div>
     <div class="ht">To NPS account — not bank. Reduces taxable in both regimes.</div>
   </div>
@@ -988,7 +993,7 @@ tbody td:first-child{text-align:left;color:var(--muted)}
       <input type="number" id="o-hli" value="0" oninput="syncAndCalc('hli',this.value)">
     </div>
     <div class="f">
-      <div class="fl"><span>NPS Self 80CCD(1B) (max ₹50k)</span></div>
+      <div class="fl"><span>NPS Self 80CCD(1B) (max ₹50k) <span style="font-size:.6rem;background:#92400e;color:#fef3c7;padding:1px 5px;border-radius:5px;margin-left:3px">Old regime only</span></span></div>
       <input type="number" id="o-npsSelf" value="0" oninput="syncAndCalc('npsSelf',this.value)">
     </div>
   </div>
@@ -1001,6 +1006,11 @@ tbody td:first-child{text-align:left;color:var(--muted)}
       <div class="fl"><span>Other Income (₹/yr)</span></div>
       <input type="number" id="o-othInc" value="0" oninput="syncAndCalc('othInc',this.value)">
     </div>
+  </div>
+  <div class="f">
+    <div class="fl"><span>VPF — Voluntary PF (₹/yr) <span style="font-size:.6rem;background:#92400e;color:#fef3c7;padding:1px 5px;border-radius:5px;margin-left:3px">Old regime only</span></span></div>
+    <input type="number" id="o-vpf" value="0" oninput="syncAndCalc('vpf',this.value)">
+    <div class="ht">Added to 80C pool (PF + VPF combined capped at ₹1.5L). No deduction benefit in New Regime.</div>
   </div>
 </div>
 </div><!-- end left -->
@@ -1124,7 +1134,7 @@ tbody td:first-child{text-align:left;color:var(--muted)}
   </div>
   <hr class="dv">
   <div class="f">
-    <div class="fl"><span>Employer NPS 80CCD(2) (% of Basic) <span class="tg b">Both</span></span><span class="sv" id="c-npsPctV">0% = ₹0/mo</span></div>
+    <div class="fl"><span>Employer NPS 80CCD(2) (% of Basic) <span class="tg b">Both</span> <span style="font-size:.6rem;color:var(--muted)">14% new · 10% old</span></span><span class="sv" id="c-npsPctV">0% = ₹0/mo</span></div>
     <div class="slw"><input type="range" id="c-npsPct" min="0" max="14" step="1" value="0" oninput="syncAndCalc('npsPct',this.value)"></div>
     <div class="ht">To NPS account — not bank. Reduces taxable in both regimes.</div>
   </div>
@@ -1290,7 +1300,7 @@ tbody td:first-child{text-align:left;color:var(--muted)}
       <input type="number" id="c-hli" value="0" oninput="syncAndCalc('hli',this.value)">
     </div>
     <div class="f">
-      <div class="fl"><span>NPS Self 80CCD(1B) (max ₹50k)</span></div>
+      <div class="fl"><span>NPS Self 80CCD(1B) (max ₹50k) <span style="font-size:.6rem;background:#92400e;color:#fef3c7;padding:1px 5px;border-radius:5px;margin-left:3px">Old regime only</span></span></div>
       <input type="number" id="c-npsSelf" value="0" oninput="syncAndCalc('npsSelf',this.value)">
     </div>
   </div>
@@ -1303,6 +1313,11 @@ tbody td:first-child{text-align:left;color:var(--muted)}
       <div class="fl"><span>Other Income (₹/yr)</span></div>
       <input type="number" id="c-othInc" value="0" oninput="syncAndCalc('othInc',this.value)">
     </div>
+  </div>
+  <div class="f">
+    <div class="fl"><span>VPF — Voluntary PF (₹/yr) <span style="font-size:.6rem;background:#92400e;color:#fef3c7;padding:1px 5px;border-radius:5px;margin-left:3px">Old regime only</span></span></div>
+    <input type="number" id="c-vpf" value="0" oninput="syncAndCalc('vpf',this.value)">
+    <div class="ht">Added to 80C pool (PF + VPF combined capped at ₹1.5L). No deduction benefit in New Regime.</div>
   </div>
 </div>
 
@@ -1722,23 +1737,66 @@ function setVF(){
   document.getElementById('o-vmi').innerHTML=htmlO;
   calc();
 }
+function computeSurcharge(tax, income, regime) {
+  // Surcharge thresholds (same for both regimes up to ₹2Cr; new regime caps at 25%)
+  let sc = 0;
+  if (income > 50000000) {        // > ₹5Cr  (new: 25%, old: 37%)
+    sc = tax * (regime === 'new' ? 0.25 : 0.37);
+  } else if (income > 20000000) { // > ₹2Cr
+    sc = tax * 0.25;
+  } else if (income > 10000000) { // > ₹1Cr
+    sc = tax * 0.15;
+  } else if (income > 5000000) {  // > ₹50L
+    sc = tax * 0.10;
+  }
+  if (sc === 0) return { sc: 0, scMr: 0, scRate: 0 };
+
+  // Marginal relief on surcharge — tax+surcharge cannot exceed tax at threshold + excess income
+  const thresholds = [5000000, 10000000, 20000000, 50000000];
+  const scRates    = [0.10,    0.15,     0.25,      regime==='new'?0.25:0.37];
+  for (let i = 0; i < thresholds.length; i++) {
+    if (income > thresholds[i]) {
+      const taxAtThresh = computeBaseTax(thresholds[i], regime);
+      const scAtThresh  = taxAtThresh * scRates[i];
+      const maxTax      = taxAtThresh + scAtThresh + (income - thresholds[i]);
+      const actualTax   = tax + sc;
+      if (actualTax > maxTax) {
+        sc = Math.max(0, maxTax - tax);
+      }
+    }
+  }
+  const scRate = income > 20000000 ? 25 : income > 10000000 ? 15 : income > 5000000 ? 10 : 0;
+  return { sc: Math.round(sc), scMr: 0, scRate };
+}
+
+function computeBaseTax(income, regime) {
+  // Compute raw slab tax on income (no deductions — used for surcharge marginal relief)
+  const slabs = regime === 'new' ? NS : OS;
+  return applySlabs(income, slabs).tax;
+}
+
 function computeTax(inc,regime,npsErAnn,foodAnn,mobileAnn,hraEx,lta,otherA,pf80C,d80d,hli,npsSelf,othDed){
   if(regime==='new'){
     const tx=Math.max(0,inc-75000-npsErAnn-foodAnn-mobileAnn);
     const{tax:base,rows}=applySlabs(tx,NS);
     const reb=tx<=1200000?Math.min(base,60000):0;
     const ar=Math.max(0,base-reb);
+    // Marginal relief for ₹12L rebate boundary
     const mr=tx>1200000?Math.max(0,ar-(tx-1200000)):0;
     const fn=Math.max(0,ar-mr);
-    const cs=Math.round(fn*0.04);
-    return{tx,base,reb,mr,fn,cs,total:fn+cs,rows};
+    // Surcharge (on tax after rebate & marginal relief)
+    const {sc,scRate}=computeSurcharge(fn,tx,'new');
+    const cs=Math.round((fn+sc)*0.04);
+    return{tx,base,reb,mr,sc,scRate,fn,cs,total:fn+sc+cs,rows};
   } else {
     const tx=Math.max(0,inc-50000-npsErAnn-foodAnn-mobileAnn-hraEx-lta-otherA-pf80C-d80d-hli-npsSelf-othDed);
     const{tax:base,rows}=applySlabs(tx,OS);
     const reb=tx<=500000?Math.min(base,12500):0;
     const ar=Math.max(0,base-reb);
-    const cs=Math.round(ar*0.04);
-    return{tx,base,reb,mr:0,fn:ar,cs,total:ar+cs,rows};
+    // Surcharge (on tax after rebate)
+    const {sc,scRate}=computeSurcharge(ar,tx,'old');
+    const cs=Math.round((ar+sc)*0.04);
+    return{tx,base,reb,mr:0,sc,scRate,fn:ar,cs,total:ar+sc+cs,rows};
   }
 }
 function setAu(id,val){
@@ -1799,8 +1857,10 @@ function calc(){
   const foodMo=+document.getElementById('foodMo').value;
   const foodAnn=foodMo*12;
   const npsPct=+document.getElementById('npsPct').value;
-  const npsErAnn=Math.round(basic*npsPct/100);
-  const npsErMo=Math.round(npsErAnn/12);
+  const npsErAnn  = Math.round(basic*npsPct/100);              // actual payroll deduction
+  const npsErAnnN = Math.min(npsErAnn, Math.round(basic*0.14)); // New regime: 14% cap
+  const npsErAnnO = Math.min(npsErAnn, Math.round(basic*0.10)); // Old regime: 10% cap
+  const npsErMo   = Math.round(npsErAnn/12);
   const mobileMo=+document.getElementById('mobile').value||0;
   const mobileAnn=mobileMo*12;
   ['c','n','o'].forEach(p=>{const el=document.getElementById(p+'-npsPctV');if(el)el.textContent=`${npsPct}% = ${fmt(npsErMo)}/mo`;});
@@ -1828,7 +1888,8 @@ function calc(){
   });
 
   const hraEx=rent>0?Math.min(hra,Math.round(basic*hraRate),Math.max(0,rent-Math.round(basic*.10))):0;
-  const pf80C=Math.min(pfEmpAnn,150000);
+  const vpf     = +document.getElementById('vpf').value||0;
+  const pf80C   = Math.min(pfEmpAnn + vpf, 150000); // PF + VPF combined, capped ₹1.5L
 
   const grossSal = fixedA + shiftAnn;     // shift allowance adds to gross every month
   const baseInc  = grossSal + othInc;
@@ -1856,11 +1917,12 @@ function calc(){
     `<div class="sbr" style="font-size:.73rem"><span class="la" style="color:var(--muted)">B = employer cost (not your income). C = taxable when paid.</span></div>`,
   ].filter(Boolean).join(''));
 
-  const args=[npsErAnn,foodAnn,mobileAnn,hraEx,lta,otherA,pf80C,d80d,hli,npsSelf,othDed];
-  const nF=computeTax(totalInc,'new',...args);
-  const oF=computeTax(totalInc,'old',...args);
-  const nB=computeTax(baseInc,'new',...args);
-  const oB=computeTax(baseInc,'old',...args);
+  const argsN=[npsErAnnN,foodAnn,mobileAnn,hraEx,lta,otherA,pf80C,d80d,hli,npsSelf,othDed];
+  const argsO=[npsErAnnO,foodAnn,mobileAnn,hraEx,lta,otherA,pf80C,d80d,hli,npsSelf,othDed];
+  const nF=computeTax(totalInc,'new',...argsN);
+  const oF=computeTax(totalInc,'old',...argsO);
+  const nB=computeTax(baseInc,'new',...argsN);
+  const oB=computeTax(baseInc,'old',...argsO);
   // Declare base TH vars here — needed by boxes AND buildIH below
   const profTax  = 200;
   const baseTaxO = oB.total;
@@ -2079,9 +2141,10 @@ function calc(){
   document.getElementById('nsum').innerHTML=[
     R('Tax on slabs',fmt(nF.base)),
     nF.reb>0?SR('Sec 87A Rebate (taxable ≤ ₹12L)',fmt(nF.reb)):null,
-    nF.mr>0?SR('Marginal Relief',fmt(nF.mr)):null,
+    nF.mr>0?SR('Marginal Relief (₹12L boundary)',fmt(nF.mr)):null,
     R('Tax after rebate',fmt(nF.fn)),
-    `<div class="sbr"><span class="la">↳ + Cess @ 4%</span><span class="va co">+ ${fmt(nF.cs)}</span></div>`,
+    nF.sc>0?`<div class="sbr"><span class="la">↳ + Surcharge @ ${nF.scRate}% (income > ₹${nF.scRate===10?'50L':nF.scRate===15?'1Cr':'2Cr'})</span><span class="va co">+ ${fmt(nF.sc)}</span></div>`:null,
+    `<div class="sbr"><span class="la">↳ + Health & Education Cess @ 4%</span><span class="va co">+ ${fmt(nF.cs)}</span></div>`,
     R('Total Tax',fmt(nF.total),'tot'),
   ].filter(Boolean).join('');
 
@@ -2096,7 +2159,7 @@ function calc(){
     hraEx>0?SR(`HRA Exemption (rent ${fmt(Math.round(rent/12))}/mo)`,fmt(hraEx)):null,
     lta>0?SR('LTA',fmt(lta)):null,
     otherA>0?SR('Books/Tel/PDA',fmt(otherA)):null,
-    SR(`80C — Employee PF${pf80C>=150000?' (capped ₹1.5L)':''}`,fmt(pf80C)),
+    SR(`80C — Employee PF${vpf>0?' + VPF':''}${pf80C>=150000?' (capped ₹1.5L)':''}`,fmt(pf80C)),
     d80d>0?SR('80D Medical Insurance',fmt(d80d)):null,
     hli>0?SR('Home Loan Interest',fmt(hli)):null,
     npsSelf>0?SR('NPS Self 80CCD(1B)',fmt(npsSelf)):null,
@@ -2109,7 +2172,8 @@ function calc(){
     R('Tax on slabs',fmt(oF.base)),
     oF.reb>0?SR('Sec 87A Rebate (taxable ≤ ₹5L)',fmt(oF.reb)):null,
     R('Tax after rebate',fmt(oF.fn)),
-    `<div class="sbr"><span class="la">↳ + Cess @ 4%</span><span class="va co">+ ${fmt(oF.cs)}</span></div>`,
+    oF.sc>0?`<div class="sbr"><span class="la">↳ + Surcharge @ ${oF.scRate}% (income > ₹${oF.scRate===10?'50L':oF.scRate===15?'1Cr':oF.scRate===25?'2Cr':'5Cr'})</span><span class="va co">+ ${fmt(oF.sc)}</span></div>`:null,
+    `<div class="sbr"><span class="la">↳ + Health & Education Cess @ 4%</span><span class="va co">+ ${fmt(oF.cs)}</span></div>`,
     R('Total Tax',fmt(oF.total),'tot'),
   ].filter(Boolean).join('');
   // Update single-regime tab displays
@@ -2707,7 +2771,7 @@ function resetAll(){
   // Reset master hidden fields
   document.getElementById('basic').value = 150000;
   const zeroIds = ['fixedAT','varP','premB','premActual','mobile','leavedays','shiftmo',
-                   'rent','lta','otherA','d80d','hli','npsSelf','othDed','othInc'];
+                   'rent','lta','otherA','d80d','hli','npsSelf','othDed','othInc','vpf'];
   zeroIds.forEach(id => { const el=document.getElementById(id); if(el) el.value=0; });
   const moEl=document.getElementById('premActualMo'); if(moEl) moEl.value='May';
   // Reset all tab-prefixed visible inputs too
